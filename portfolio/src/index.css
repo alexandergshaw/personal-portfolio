@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import '@tailwindcss/typography';
+/* @import '@tailwindcss/typography'; */
 @import url("https://unpkg.com/@tailwindcss/typography@0.2.x/dist/typography.min.css");
 @import url("https://unpkg.com/@tailwindcss/tailwindcss@^1.0/dist/tailwind.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap");
