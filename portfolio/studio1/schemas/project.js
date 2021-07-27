@@ -32,6 +32,10 @@ export default {
         {
             name: "link",
             type: "url",
+        },
+        {
+            name: "tags",
+            type: "array",
             of: [
                 {
                     type: "string"
