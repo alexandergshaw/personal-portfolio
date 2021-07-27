@@ -22,6 +22,8 @@ export default function Project() {
   }, []);
 
 //   todo: solve CORS problem at 1:27:38
+// todo: come up with more fields that are descriptive of my project
+// todo: come up with a way to host the projects that I do
   return (
     <main className="bg-green-100 min-h-screen p-12">
       <section className="container mx-auto">
