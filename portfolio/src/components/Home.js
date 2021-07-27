@@ -1,5 +1,4 @@
 import React from "react"
-import background from '../assets/background.jpg'
 import firBackgroundPicture from "../assets/firBackgroundPicture.jpg"
 
 export default function Home() {
