@@ -9,11 +9,10 @@ export default function Home() {
       <div className="TerminalLines">
         <Typical
           steps={["Hello", 1000, "Hello world!", 500]}
-        //   loop={Infinity}
+          //   loop={Infinity}
           wrapper="p"
+          className="TerminalText"
         />
-        
-        <ProgressBar now={60} />
       </div>
 
       <div className="ScanLine"></div>

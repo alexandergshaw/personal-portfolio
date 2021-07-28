@@ -47,3 +47,8 @@
   pointer-events: none;
   animation: ScanLine 10s linear infinite;
 }
+
+.TerminalText {
+  margin: auto;
+  text-align: center;
+}
