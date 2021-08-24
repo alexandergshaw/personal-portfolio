@@ -3,16 +3,27 @@ import "./Home.css";
 import Typical from "react-typical";
 
 export default function Home() {
+  // const handleKeyPress = (event) => {
+  //   console.log('event', event);
+  // };
+
+  let input = document.createElement("span");
+	input.setAttribute("id", "input");
+
+  let handleInput = (e) => {
+    console.log('event', e);
+  }
+
   return (
-    <main className="Terminal">
+    <main className="Terminal" onKeyDown={handleInput} tabIndex={-1}>
       <div className="TerminalLines">
-        <Typical
+        {/* <Typical
           steps={["Hello", 1000, "Hello world!", 500]}
           //   loop={Infinity}
           wrapper="p"
           className="TerminalText"
-        />
-        <span className="Cursor">test</span>
+        /> */}
+        <span className="Cursor" >|</span>
       </div>
 
       <div className="ScanLine"></div>

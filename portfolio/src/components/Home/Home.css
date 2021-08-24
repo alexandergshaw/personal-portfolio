@@ -8,11 +8,8 @@
 }
 
 .Cursor {
-  /* content: "■";
-  margin-left: 1px;
-  line-height: 1rem; */
-  animation: blink-animation 1s steps(5, start) infinite;
-  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+  animation: blink-animation 0.97s steps(5, start) infinite;
+  -webkit-animation: blink-animation 0.97s steps(5, start) infinite;
 }
 
 @keyframes blink-animation {
