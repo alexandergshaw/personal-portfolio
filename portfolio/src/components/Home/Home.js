@@ -15,7 +15,7 @@ export default function Home() {
   }
 
   return (
-    <main className="Terminal" onKeyDown={handleInput} tabIndex={-1}>
+    <main className="Terminal " onKeyDown={handleInput} tabIndex={-1}>
       <div className="TerminalLines">
         {/* <Typical
           steps={["Hello", 1000, "Hello world!", 500]}
@@ -23,7 +23,7 @@ export default function Home() {
           wrapper="p"
           className="TerminalText"
         /> */}
-        <span>{input}</span>
+        <span className="Terminal-Text">{input}</span>
         <span className="Cursor" >|</span>
       </div>
 

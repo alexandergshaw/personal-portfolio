@@ -2,14 +2,70 @@
   background-color: black;
   background-image: radial-gradient(rgba(20, 59, 28), black 120%);
   height: 100vh;
-  color: #5bf870;
-  text-shadow: 0 0 5px #c8c8c8;
   font: 1.3rem Inconsolata, monospace;
+  color: #5bf870;
+}
+
+.Terminal-Text {
+  text-shadow: 0 0 5px #c8c8c8;
 }
 
 .Cursor {
+  -webkit-animation: 1s blink step-end infinite;
+  -moz-animation: 1s blink step-end infinite;
+  -ms-animation: 1s blink step-end infinite;
+  -o-animation: 1s blink step-end infinite;
+  animation: 1s blink step-end infinite;
+}
+
+@keyframes blink {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: #5bf870;
+  }
+}
+
+@-moz-keyframes blink {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: #5bf870;
+  }
+}
+
+@-webkit-keyframes blink {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: #5bf870;
+  }
+}
+
+@-ms-keyframes blink {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: #5bf870;
+  }
+}
+
+@-o-keyframes blink {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: #5bf870;
+  }
+}
+
+/* .Cursor {
   animation: blink-animation 0.97s steps(5, start) infinite;
-  -webkit-animation: blink-animation 0.97s steps(5, start) infinite;
+  -webkit-animation: blink-animation 0.90s steps(5, start) infinite;
 }
 
 @keyframes blink-animation {
@@ -21,7 +77,7 @@
   to {
     visibility: hidden;
   }
-}
+} */
 
 .TerminalLines {
   content: " ";
