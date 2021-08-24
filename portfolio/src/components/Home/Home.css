@@ -7,6 +7,25 @@
   font: 1.3rem Inconsolata, monospace;
 }
 
+.Cursor {
+  /* content: "■";
+  margin-left: 1px;
+  line-height: 1rem; */
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+
 .TerminalLines {
   content: " ";
   display: block;

@@ -1,6 +1,5 @@
 import React from "react";
 import "./Home.css";
-import ProgressBar from "react-bootstrap/ProgressBar";
 import Typical from "react-typical";
 
 export default function Home() {
@@ -13,6 +12,7 @@ export default function Home() {
           wrapper="p"
           className="TerminalText"
         />
+        <span className="Cursor">test</span>
       </div>
 
       <div className="ScanLine"></div>
