@@ -7,12 +7,15 @@ import {
   ENTER_KEY_CODE,
 } from "../../common/constants/keys.constants";
 import { ALL_COMMANDS } from "../../common/constants/commands.constants";
+import { DIVIDER } from "../../common/constants/frills.constants";
 import "./Home.css";
 
 class Home extends Component {
   constructor() {
     super();
     this.handleInput = this.handleInput.bind(this);
+    this.handleCommand = this.handleCommand.bind(this);
+
     this.state = {
       currentTextLine: "",
       previousTextLines: [],
@@ -43,15 +46,15 @@ class Home extends Component {
       });
     } else if (newInput.keyCode === ENTER_KEY_CODE) {
       console.log('in enter');
-      let previousLine = this.state.previousTextLines;
-      previousLine.push(this.state.currentTextLine);
-      this.handleCommand(this.state.currentTextLine);
+      let previousLines = this.state.previousTextLines;
+      previousLines.push(this.state.currentTextLine);
+
       this.setState({
         currentTextLine: "",
         stringBeforeCursor: "",
         stringAfterCursor: "",
         cursorPosition: 0,
-        previousTextLines: previousLine,
+        previousTextLines: this.handleCommand(this.state.currentTextLine),
       });
     } else if (newInput.keyCode === LEFT_ARROW_KEY_CODE) {
       const newCursorPosition =
@@ -103,18 +106,28 @@ class Home extends Component {
   handleCommand(command) {
     console.log('in handleCommand');
     const upperCaseCommand = command.toUpperCase();
+    let previousLines = this.state.previousTextLines;
+
     if (upperCaseCommand === ALL_COMMANDS.HELP.toUpperCase()) {
-      console.log('in help');
+      previousLines.push(DIVIDER);
+      previousLines.push("All available commands");
+      previousLines.push("help - display all commands");
+      previousLines.push("projects - display all projects");
       // output list of commands and descriptions
     } else if (upperCaseCommand === ALL_COMMANDS.PROJECTS.toUpperCase()) {
       console.log('in projects');
+      previousLines = [];
       // clear screen and display projects
     } else {
       console.log('in else');
       let mostLikelyCommand = this.determineMostLikelyCommand(command);
       console.log('mostLikelyCommand', mostLikelyCommand);
+      previousLines.push(DIVIDER);
+      previousLines.push("Unrecognized command. Did you mean " + mostLikelyCommand.toLowerCase() + "?");
       // determine which command the string is closest to, then output question
     }
+
+    return previousLines;
   }
 
   determineMostLikelyCommand(command) {
