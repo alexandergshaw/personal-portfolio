@@ -18,6 +18,7 @@ class Home extends Component {
     if (newInput.key.length === 1) {
       const newStringOnScreen = this.state.input + newInput.key;
       const newCursorPosition = this.state.cursorPosition + 1;
+
       this.setState({
         input: newStringOnScreen,
         stringBeforeCursor: newStringOnScreen.slice(0, newCursorPosition),
@@ -34,7 +35,6 @@ class Home extends Component {
       const newCursorPosition = this.state.cursorPosition > 0 ? this.state.cursorPosition - 1 : 0;
       const newStringBeforeCursor = this.state.input.slice(0, newCursorPosition);
       const newStringAfterCursor = this.state.input.slice(newCursorPosition);
-      console.log('newStringAfterCursor', newStringAfterCursor);
 
       this.setState({
         stringBeforeCursor: newStringBeforeCursor,
@@ -43,9 +43,8 @@ class Home extends Component {
       });
     } else if (newInput.keyCode === RIGHT_ARROW_KEY_CODE) {
       const newCursorPosition = this.state.cursorPosition < this.state.input.length ? this.state.cursorPosition + 1 : this.state.cursorPosition;
-      const newStringBeforeCursor = this.state.stringBeforeCursor.slice(0, newCursorPosition);
-      const newStringAfterCursor = this.state.stringAfterCursor.slice(newCursorPosition);
-
+      const newStringBeforeCursor = this.state.input.slice(0, newCursorPosition);
+      const newStringAfterCursor = this.state.input.slice(newCursorPosition);
 
       this.setState({
         stringBeforeCursor: newStringBeforeCursor,
