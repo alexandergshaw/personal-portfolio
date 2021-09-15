@@ -1,4 +1,5 @@
 export const ALL_COMMANDS = {
     HELP: "help",
-    PROJECTS: "projects"
+    PROJECTS: "projects",
+    ABOUT: "about"
 };

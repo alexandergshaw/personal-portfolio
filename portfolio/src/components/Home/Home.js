@@ -124,11 +124,16 @@ class Home extends Component {
     if (upperCaseCommand === ALL_COMMANDS.HELP.toUpperCase()) {
       previousLines.push(DIVIDER);
       previousLines.push("All available commands");
-      previousLines.push("help - display all commands");
       previousLines.push("projects - display all projects");
+      previousLines.push("about - display info about the developer");
+      previousLines.push("help - display all commands");
     } else if (upperCaseCommand === ALL_COMMANDS.PROJECTS.toUpperCase()) {
       previousLines = [];
       // clear screen and display projects
+    } else if (upperCaseCommand === ALL_COMMANDS.ABOUT.toUpperCase()) {
+      previousLines = [];
+      // clear screen and display things a recruiter needs to see
+      // include ascii art of myself?
     } else {
       let mostLikelyCommand = this.determineMostLikely(
         command,
@@ -195,7 +200,7 @@ class Home extends Component {
           ))}
           <div>
             <span className="Terminal-Text">{renderStringBeforeCursor()}</span>
-            <span className="Cursor">|</span>
+            <span className="Cursor">█</span>
             <span className="Terminal-Text">{renderStringAfterCursor()}</span>
           </div>
         </div>
