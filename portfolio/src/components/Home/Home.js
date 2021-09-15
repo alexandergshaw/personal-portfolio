@@ -1,36 +1,42 @@
-import React from "react";
+import React, { Component } from "react";
 import "./Home.css";
 
-export default function Home() {
+class Home extends Component {
+  constructor() {
+    super();
+    this.handleInput = this.handleInput.bind(this);
+    this.state = {
+      input: "test",
+    };
+  }
+  handleInput(newInput) {
+    console.log('newInput', newInput);
+    this.setState({
+      input: this.input + newInput.key
+    });
+  }
   // const handleKeyPress = (event) => {
   //   console.log('event', event);
   // };
 
-  let input = 'test';
+  // let input = "test";
 
-  let handleInput = (e) => {
-    console.log('event', e);
-    input += e.key;
-    console.log('input', input);
+  // let handleInput = (e) => {
+  //   console.log("event", e);
+  //   input += e.key;
+  //   console.log("input", input);
+  // };
+
+  render() {
+    return (
+      <main className="Terminal" onKeyDown={this.handleInput} tabIndex={-1}>
+        <div className="TerminalLines">
+          <span className="Terminal-Text">{this.state.input}</span>
+          <span className="Cursor">|</span>
+        </div>
+      </main>
+    );
   }
-
-  return (
-    <main className="Terminal " onKeyDown={handleInput} tabIndex={-1}>
-      <div className="TerminalLines">
-        {/* <Typical
-          steps={["Hello", 1000, "Hello world!", 500]}
-          //   loop={Infinity}
-          wrapper="p"
-          className="TerminalText"
-        /> */}
-        <span className="Terminal-Text">{input}</span>
-        <span className="Cursor" >|</span>
-      </div>
-
-      {/* <img src={firBackgroundPicture} alt="Water Droplets on Fir" className="absolute object-cover w-full h-full"/>
-            <section class="relative flex justify-center min-h-screen pt-12 lg:pt-64 px-8">
-                <h1 className="text-6xl text-green-100 font-bold cursive leading-none lg:leading-snug home-name">Hello there!</h1>
-            </section> */}
-    </main>
-  );
 }
+
+export default Home;
