@@ -164,7 +164,7 @@ class Home extends Component {
     if (possibilities.length > 1) {
       return this.determineMostLikely(input, possibilities);
     } else if (possibilities.length) {
-      return availableOptions[0];
+      return possibilities[0];
     } else {
       return "";
     }
