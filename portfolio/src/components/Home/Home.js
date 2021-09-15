@@ -4,6 +4,7 @@ import {
   LEFT_ARROW_KEY_CODE,
   RIGHT_ARROW_KEY_CODE,
   SPACE_KEY_CODE,
+  ENTER_KEY_CODE,
 } from "../../common/constants/keys.constants";
 import "./Home.css";
 
@@ -12,22 +13,25 @@ class Home extends Component {
     super();
     this.handleInput = this.handleInput.bind(this);
     this.state = {
-      input: "",
+      currentTextLine: "",
+      previousTextLines: [],
       cursorPosition: 0,
       stringBeforeCursor: "",
       stringAfterCursor: "",
     };
   }
   handleInput(newInput) {
-    let audio = new Audio('../../assets/sound/keys.mp3');
-    audio.play();
+    // let audio = new Audio('../../assets/sound/keys.mp3');
+    // audio.play();
+
+    console.log("newInput", newInput);
 
     if (newInput.key.length === 1) {
-      const newStringOnScreen = this.state.input + newInput.key;
+      const newStringOnScreen = this.state.currentTextLine + newInput.key;
       const newCursorPosition = this.state.cursorPosition + 1;
 
       this.setState({
-        input: newStringOnScreen,
+        currentTextLine: newStringOnScreen,
         stringBeforeCursor: newStringOnScreen.slice(0, newCursorPosition),
         cursorPosition: newCursorPosition,
       });
@@ -37,14 +41,26 @@ class Home extends Component {
         cursorPosition:
           this.state.cursorPosition > 0 ? this.state.cursorPosition - 1 : 0,
       });
+    } else if (newInput.keyCode === ENTER_KEY_CODE) {
+      let previousLine = this.state.previousTextLines;
+      previousLine.push(this.state.currentTextLine);
+
+      this.setState({
+        currentTextLine: "",
+        stringBeforeCursor: "",
+        stringAfterCursor: "",
+        cursorPosition: 0,
+        previousTextLines: previousLine,
+      });
     } else if (newInput.keyCode === LEFT_ARROW_KEY_CODE) {
       const newCursorPosition =
         this.state.cursorPosition > 0 ? this.state.cursorPosition - 1 : 0;
-      const newStringBeforeCursor = this.state.input.slice(
+      const newStringBeforeCursor = this.state.currentTextLine.slice(
         0,
         newCursorPosition
       );
-      const newStringAfterCursor = this.state.input.slice(newCursorPosition);
+      const newStringAfterCursor =
+        this.state.currentTextLine.slice(newCursorPosition);
 
       this.setState({
         stringBeforeCursor: newStringBeforeCursor,
@@ -53,14 +69,15 @@ class Home extends Component {
       });
     } else if (newInput.keyCode === RIGHT_ARROW_KEY_CODE) {
       const newCursorPosition =
-        this.state.cursorPosition < this.state.input.length
+        this.state.cursorPosition < this.state.currentTextLine.length
           ? this.state.cursorPosition + 1
           : this.state.cursorPosition;
-      const newStringBeforeCursor = this.state.input.slice(
+      const newStringBeforeCursor = this.state.currentTextLine.slice(
         0,
         newCursorPosition
       );
-      const newStringAfterCursor = this.state.input.slice(newCursorPosition);
+      const newStringAfterCursor =
+        this.state.currentTextLine.slice(newCursorPosition);
 
       this.setState({
         stringBeforeCursor: newStringBeforeCursor,
@@ -68,15 +85,15 @@ class Home extends Component {
         cursorPosition: newCursorPosition,
       });
     } else if (newInput.keyCode === SPACE_KEY_CODE) {
-
       const newCursorPosition = this.state.cursorPosition + 1;
       const newStringBeforeCursor = this.state.stringBeforeCursor + " ";
-      const newStringOnScreen = this.state.stringBeforeCursor + " " + this.state.stringAfterCursor;
-      
-      console.log('newStringBeforeCursor', newStringBeforeCursor);
+      const newStringOnScreen =
+        this.state.stringBeforeCursor + " " + this.state.stringAfterCursor;
+
+      console.log("newStringBeforeCursor", newStringBeforeCursor);
 
       this.setState({
-        input: newStringOnScreen,
+        currentTextLine: newStringOnScreen,
         stringBeforeCursor: newStringBeforeCursor,
         cursorPosition: newCursorPosition,
       });
@@ -86,12 +103,12 @@ class Home extends Component {
   //   console.log('event', event);
   // };
 
-  // let input = "test";
+  // let currentTextLine = "test";
 
   // let handleInput = (e) => {
   //   console.log("event", e);
-  //   input += e.key;
-  //   console.log("input", input);
+  //   currentTextLine += e.key;
+  //   console.log("currentTextLine", currentTextLine);
   // };
 
   render() {
