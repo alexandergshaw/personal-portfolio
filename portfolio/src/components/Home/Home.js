@@ -5,6 +5,7 @@ import {
   RIGHT_ARROW_KEY_CODE,
   SPACE_KEY_CODE,
   ENTER_KEY_CODE,
+  TAB_KEY_CODE,
 } from "../../common/constants/keys.constants";
 import { ALL_COMMANDS } from "../../common/constants/commands.constants";
 import { DIVIDER } from "../../common/constants/frills.constants";
@@ -24,7 +25,7 @@ class Home extends Component {
       stringAfterCursor: "",
     };
   }
-  
+
   handleInput(newInput) {
     // let audio = new Audio('../../assets/sound/keys.mp3');
     // audio.play();
@@ -39,13 +40,14 @@ class Home extends Component {
         cursorPosition: newCursorPosition,
       });
     } else if (newInput.keyCode === BACKSPACE_KEY_CODE) {
+      const newStringBeforeCursor = this.state.stringBeforeCursor.slice(0, -1);
       this.setState({
-        stringBeforeCursor: this.state.stringBeforeCursor.slice(0, -1),
+        stringBeforeCursor: newStringBeforeCursor,
+        currentTextLine: newStringBeforeCursor + this.state.stringAfterCursor,
         cursorPosition:
           this.state.cursorPosition > 0 ? this.state.cursorPosition - 1 : 0,
       });
     } else if (newInput.keyCode === ENTER_KEY_CODE) {
-      console.log('in enter');
       let previousLines = this.state.previousTextLines;
       previousLines.push(this.state.currentTextLine);
 
@@ -56,6 +58,19 @@ class Home extends Component {
         cursorPosition: 0,
         previousTextLines: this.handleCommand(this.state.currentTextLine),
       });
+    } else if (newInput.keyCode === TAB_KEY_CODE) {
+      newInput.preventDefault();
+      const autocompleteText = this.autocomplete(
+        this.state.currentTextLine,
+        Object.values(ALL_COMMANDS).map((command) => command.toUpperCase())
+      );
+
+      if (autocompleteText) {
+        this.setState({
+          currentTextLine: autocompleteText,
+          stringBeforeCursor: autocompleteText.toLowerCase(),
+        });
+      }
     } else if (newInput.keyCode === LEFT_ARROW_KEY_CODE) {
       const newCursorPosition =
         this.state.cursorPosition > 0 ? this.state.cursorPosition - 1 : 0;
@@ -89,7 +104,6 @@ class Home extends Component {
         cursorPosition: newCursorPosition,
       });
     } else if (newInput.keyCode === SPACE_KEY_CODE) {
-      console.log("in space");
       const newCursorPosition = this.state.cursorPosition + 1;
       const newStringBeforeCursor = this.state.stringBeforeCursor + " ";
       const newStringOnScreen =
@@ -104,7 +118,6 @@ class Home extends Component {
   }
 
   handleCommand(command) {
-    console.log('in handleCommand');
     const upperCaseCommand = command.toUpperCase();
     let previousLines = this.state.previousTextLines;
 
@@ -113,27 +126,48 @@ class Home extends Component {
       previousLines.push("All available commands");
       previousLines.push("help - display all commands");
       previousLines.push("projects - display all projects");
-      // output list of commands and descriptions
     } else if (upperCaseCommand === ALL_COMMANDS.PROJECTS.toUpperCase()) {
-      console.log('in projects');
       previousLines = [];
       // clear screen and display projects
     } else {
-      console.log('in else');
-      let mostLikelyCommand = this.determineMostLikelyCommand(command);
-      console.log('mostLikelyCommand', mostLikelyCommand);
+      let mostLikelyCommand = this.determineMostLikely(
+        command,
+        Object.values(ALL_COMMANDS).map((command) => command.toUpperCase())
+      );
       previousLines.push(DIVIDER);
-      previousLines.push("Unrecognized command. Did you mean " + mostLikelyCommand.toLowerCase() + "?");
-      // determine which command the string is closest to, then output question
+      previousLines.push(
+        "Unrecognized command. Did you mean " +
+          mostLikelyCommand.toLowerCase() +
+          "?"
+      );
     }
 
     return previousLines;
   }
 
-  determineMostLikelyCommand(command) {
-    let stringSimilarity =  require("string-similarity");
-    const allCommandsUpperCase = Object.values(ALL_COMMANDS).map(command => command.toUpperCase());
-    return stringSimilarity.findBestMatch(command.toUpperCase(), allCommandsUpperCase).bestMatch.target;
+  determineMostLikely(input, availableOptions) {
+    let stringSimilarity = require("string-similarity");
+    return stringSimilarity.findBestMatch(input.toUpperCase(), availableOptions)
+      .bestMatch.target;
+  }
+
+  autocomplete(input, availableOptions) {
+    const upperCaseInput = input.toUpperCase();
+    let possibilities = [];
+    availableOptions.forEach((option) => {
+      const upperCaseOption = option.toUpperCase();
+      if (upperCaseOption.includes(upperCaseInput)) {
+        possibilities.push(option);
+      }
+    });
+
+    if (possibilities.length > 1) {
+      return this.determineMostLikely(input, possibilities);
+    } else if (possibilities.length) {
+      return availableOptions[0];
+    } else {
+      return "";
+    }
   }
 
   render() {
