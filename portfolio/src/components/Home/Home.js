@@ -9,12 +9,13 @@ import {
   DELETE_KEY_CODE,
 } from "../../common/constants/keys.constants";
 import { ALL_COMMANDS } from "../../common/constants/commands.constants";
-import { DIVIDER } from "../../common/constants/frills.constants";
+import { DIVIDER, LINE_START } from "../../common/constants/frills.constants";
 import "./Home.css";
 
 class Home extends Component {
   constructor() {
     super();
+    this.welcome = this.welcome.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this.handleCommand = this.handleCommand.bind(this);
 
@@ -24,7 +25,14 @@ class Home extends Component {
       cursorPosition: 0,
       stringBeforeCursor: "",
       stringAfterCursor: "",
+      // todo: add in recruiter's user name into the current file path
+      currentFilePath: "C:\\Users\\testUser\\portfolios\\AlexShaw"
     };
+    this.welcome();
+  }
+
+  welcome() {
+    console.log('in welcome()');
   }
 
   handleInput(newInput) {
@@ -57,7 +65,7 @@ class Home extends Component {
       });
     } else if (newInput.keyCode === ENTER_KEY_CODE) {
       let previousLines = this.state.previousTextLines;
-      previousLines.push(this.state.currentTextLine);
+      previousLines.push(LINE_START + this.state.currentTextLine);
 
       this.setState({
         currentTextLine: "",
@@ -207,6 +215,7 @@ class Home extends Component {
             </div>
           ))}
           <div>
+            <span className="Terminal-Text">{LINE_START}</span>
             <span className="Terminal-Text">{renderStringBeforeCursor()}</span>
             <span className="Cursor">█</span>
             <span className="Terminal-Text">{renderStringAfterCursor()}</span>
