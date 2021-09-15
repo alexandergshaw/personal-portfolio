@@ -116,26 +116,29 @@ class Home extends Component {
 
     const renderStringBeforeCursor = () => {
       if (stringBeforeCursor.length) {
-        return (
-          <span className="Terminal-Text">{this.state.stringBeforeCursor}</span>
-        );
+        return this.state.stringBeforeCursor;
       }
     };
 
     const renderStringAfterCursor = () => {
       if (stringAfterCursor.length) {
-        return (
-          <span className="Terminal-Text">{this.state.stringAfterCursor}</span>
-        );
+        return this.state.stringAfterCursor;
       }
     };
 
     return (
       <main className="Terminal" onKeyDown={this.handleInput} tabIndex={-1}>
         <div className="TerminalLines">
-          {renderStringBeforeCursor()}
-          <span className="Cursor">|</span>
-          {renderStringAfterCursor()}
+          {this.state.previousTextLines.map((line) => (
+            <div>
+              <span className="Terminal-Text">{line}</span>
+            </div>
+          ))}
+          <div>
+            <span className="Terminal-Text">{renderStringBeforeCursor()}</span>
+            <span className="Cursor">|</span>
+            <span className="Terminal-Text">{renderStringAfterCursor()}</span>
+          </div>
           <span className="Terminal-Text">{this.state.cursorPosition}</span>
         </div>
       </main>
