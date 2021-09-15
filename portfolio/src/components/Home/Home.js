@@ -11,10 +11,15 @@ class Home extends Component {
   }
   handleInput(newInput) {
     console.log('newInput', newInput);
-    console.log('this.input', this.input);
-    this.setState({
-      input: this.state.input + newInput.key
-    });
+    if (newInput.key.length === 1) {
+      this.setState({
+        input: this.state.input + newInput.key
+      });
+    } else if (newInput.keyCode === 8) {
+      this.setState({
+        input: this.state.input.slice(0, -1)
+      })
+    }
   }
   // const handleKeyPress = (event) => {
   //   console.log('event', event);
