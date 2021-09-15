@@ -21,12 +21,12 @@ class Home extends Component {
     };
   }
   handleInput(newInput) {
+    console.log("newInput", newInput);
+    console.log("newInput.keyCode === SPACE_KEY_CODE", newInput.keyCode === SPACE_KEY_CODE);
     // let audio = new Audio('../../assets/sound/keys.mp3');
     // audio.play();
 
-    console.log("newInput", newInput);
-
-    if (newInput.key.length === 1) {
+    if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
       const newCursorPosition = this.state.cursorPosition + 1;
 
@@ -85,12 +85,12 @@ class Home extends Component {
         cursorPosition: newCursorPosition,
       });
     } else if (newInput.keyCode === SPACE_KEY_CODE) {
+      console.log("in space");
       const newCursorPosition = this.state.cursorPosition + 1;
       const newStringBeforeCursor = this.state.stringBeforeCursor + " ";
       const newStringOnScreen =
-        this.state.stringBeforeCursor + " " + this.state.stringAfterCursor;
+        this.state.stringBeforeCursor + this.state.stringAfterCursor;
 
-      console.log("newStringBeforeCursor", newStringBeforeCursor);
 
       this.setState({
         currentTextLine: newStringOnScreen,
