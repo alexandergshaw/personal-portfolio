@@ -6,6 +6,7 @@ import {
   SPACE_KEY_CODE,
   ENTER_KEY_CODE,
 } from "../../common/constants/keys.constants";
+import { ALL_COMMANDS } from "../../common/constants/commands.constants";
 import "./Home.css";
 
 class Home extends Component {
@@ -20,9 +21,8 @@ class Home extends Component {
       stringAfterCursor: "",
     };
   }
+  
   handleInput(newInput) {
-    console.log("newInput", newInput);
-    console.log("newInput.keyCode === SPACE_KEY_CODE", newInput.keyCode === SPACE_KEY_CODE);
     // let audio = new Audio('../../assets/sound/keys.mp3');
     // audio.play();
 
@@ -42,9 +42,10 @@ class Home extends Component {
           this.state.cursorPosition > 0 ? this.state.cursorPosition - 1 : 0,
       });
     } else if (newInput.keyCode === ENTER_KEY_CODE) {
+      console.log('in enter');
       let previousLine = this.state.previousTextLines;
       previousLine.push(this.state.currentTextLine);
-
+      this.handleCommand(this.state.currentTextLine);
       this.setState({
         currentTextLine: "",
         stringBeforeCursor: "",
@@ -91,7 +92,6 @@ class Home extends Component {
       const newStringOnScreen =
         this.state.stringBeforeCursor + this.state.stringAfterCursor;
 
-
       this.setState({
         currentTextLine: newStringOnScreen,
         stringBeforeCursor: newStringBeforeCursor,
@@ -99,17 +99,29 @@ class Home extends Component {
       });
     }
   }
-  // const handleKeyPress = (event) => {
-  //   console.log('event', event);
-  // };
 
-  // let currentTextLine = "test";
+  handleCommand(command) {
+    console.log('in handleCommand');
+    const upperCaseCommand = command.toUpperCase();
+    if (upperCaseCommand === ALL_COMMANDS.HELP.toUpperCase()) {
+      console.log('in help');
+      // output list of commands and descriptions
+    } else if (upperCaseCommand === ALL_COMMANDS.PROJECTS.toUpperCase()) {
+      console.log('in projects');
+      // clear screen and display projects
+    } else {
+      console.log('in else');
+      let mostLikelyCommand = this.determineMostLikelyCommand(command);
+      console.log('mostLikelyCommand', mostLikelyCommand);
+      // determine which command the string is closest to, then output question
+    }
+  }
 
-  // let handleInput = (e) => {
-  //   console.log("event", e);
-  //   currentTextLine += e.key;
-  //   console.log("currentTextLine", currentTextLine);
-  // };
+  determineMostLikelyCommand(command) {
+    let stringSimilarity =  require("string-similarity");
+    const allCommandsUpperCase = Object.values(ALL_COMMANDS).map(command => command.toUpperCase());
+    return stringSimilarity.findBestMatch(command.toUpperCase(), allCommandsUpperCase).bestMatch.target;
+  }
 
   render() {
     let { stringBeforeCursor, stringAfterCursor } = this.state;
@@ -139,7 +151,6 @@ class Home extends Component {
             <span className="Cursor">|</span>
             <span className="Terminal-Text">{renderStringAfterCursor()}</span>
           </div>
-          <span className="Terminal-Text">{this.state.cursorPosition}</span>
         </div>
       </main>
     );
