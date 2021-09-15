@@ -11,8 +11,9 @@ class Home extends Component {
   }
   handleInput(newInput) {
     console.log('newInput', newInput);
+    console.log('this.input', this.input);
     this.setState({
-      input: this.input + newInput.key
+      input: this.state.input + newInput.key
     });
   }
   // const handleKeyPress = (event) => {
