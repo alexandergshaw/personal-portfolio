@@ -6,6 +6,7 @@ import {
   SPACE_KEY_CODE,
   ENTER_KEY_CODE,
   TAB_KEY_CODE,
+  DELETE_KEY_CODE,
 } from "../../common/constants/keys.constants";
 import { ALL_COMMANDS } from "../../common/constants/commands.constants";
 import { DIVIDER } from "../../common/constants/frills.constants";
@@ -29,6 +30,7 @@ class Home extends Component {
   handleInput(newInput) {
     // let audio = new Audio('../../assets/sound/keys.mp3');
     // audio.play();
+    console.log('newInput', newInput);
 
     if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
@@ -46,6 +48,12 @@ class Home extends Component {
         currentTextLine: newStringBeforeCursor + this.state.stringAfterCursor,
         cursorPosition:
           this.state.cursorPosition > 0 ? this.state.cursorPosition - 1 : 0,
+      });
+    } else if (newInput.keyCode === DELETE_KEY_CODE) {
+      const newStringAfterCursor = this.state.stringAfterCursor.slice(this.state.cursorPosition + 1);
+      this.setState({
+        stringAfterCursor: newStringAfterCursor,
+        currentTextLine: this.state.stringBeforeCursor + newStringAfterCursor
       });
     } else if (newInput.keyCode === ENTER_KEY_CODE) {
       let previousLines = this.state.previousTextLines;
@@ -114,7 +122,7 @@ class Home extends Component {
         stringBeforeCursor: newStringBeforeCursor,
         cursorPosition: newCursorPosition,
       });
-    }
+    } 
   }
 
   handleCommand(command) {
