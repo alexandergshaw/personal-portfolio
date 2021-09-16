@@ -9,7 +9,11 @@ import {
   DELETE_KEY_CODE,
 } from "../../common/constants/keys.constants";
 import { ALL_COMMANDS } from "../../common/constants/commands.constants";
-import { DIVIDER, LINE_START } from "../../common/constants/frills.constants";
+import {
+  DIVIDER,
+  LINE_START,
+} from "../../common/constants/bells-and-whistles.constants";
+import { WELCOME_ASCII_ART, SALUTATIONS_3D_ASCII_ART, HELLO_HUMAN_3D_ASCII_ART, TERMINAL_NAME_3D_ASCII_ART } from "../../common/constants/ascii-art.constants";
 import "./Home.css";
 
 class Home extends Component {
@@ -18,6 +22,7 @@ class Home extends Component {
     this.welcome = this.welcome.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this.handleCommand = this.handleCommand.bind(this);
+    this.goToNextLine = this.goToNextLine.bind(this);
 
     this.state = {
       currentTextLine: "",
@@ -25,20 +30,51 @@ class Home extends Component {
       cursorPosition: 0,
       stringBeforeCursor: "",
       stringAfterCursor: "",
-      // todo: add in recruiter's user name into the current file path
-      currentFilePath: "C:\\Users\\testUser\\portfolios\\AlexShaw"
     };
     this.welcome();
   }
 
   welcome() {
-    console.log('in welcome()');
+    console.log("in welcome()");
+    TERMINAL_NAME_3D_ASCII_ART.forEach((line) => {
+      console.log("------------NEW LINE--------------");
+      line.split("").forEach((character) => { 
+        console.log("------------NEW CHAR--------------");
+        console.log('character', character);
+        const input = {
+          key: character,
+          keyCode: " "
+        };
+        this.handleInput(input);
+      });
+      this.goToNextLine(line);
+    });
+  }
+
+  goToNextLine(line) {
+    console.log("in goToNextLine");
+    const previousLines = this.state.previousTextLines;
+    previousLines.push(line);
+
+    console.log("previousLines", previousLines);
+
+    this.setState({
+      currentTextLine: "",
+      previousTextLines: previousLines,
+      cursorPosition: 0,
+      stringBeforeCursor: "",
+      stringAfterCursor: "",
+    });
   }
 
   handleInput(newInput) {
     // let audio = new Audio('../../assets/sound/keys.mp3');
     // audio.play();
-    console.log('newInput', newInput);
+    console.log("newInput", newInput);
+    console.log(
+      "newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE",
+      newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE
+    );
 
     if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
@@ -58,14 +94,20 @@ class Home extends Component {
           this.state.cursorPosition > 0 ? this.state.cursorPosition - 1 : 0,
       });
     } else if (newInput.keyCode === DELETE_KEY_CODE) {
-      const newStringAfterCursor = this.state.stringAfterCursor.slice(this.state.cursorPosition + 1);
+      const newStringAfterCursor = this.state.stringAfterCursor.slice(
+        this.state.cursorPosition + 1
+      );
       this.setState({
         stringAfterCursor: newStringAfterCursor,
-        currentTextLine: this.state.stringBeforeCursor + newStringAfterCursor
+        currentTextLine: this.state.stringBeforeCursor + newStringAfterCursor,
       });
     } else if (newInput.keyCode === ENTER_KEY_CODE) {
       let previousLines = this.state.previousTextLines;
-      previousLines.push(LINE_START + this.state.currentTextLine);
+      let priorLine =
+        this.state.currentTextLine.slice(0, this.state.cursorPosition) +
+        " " +
+        this.state.currentTextLine.slice(this.state.cursorPosition);
+      previousLines.push(LINE_START + priorLine);
 
       this.setState({
         currentTextLine: "",
@@ -130,7 +172,9 @@ class Home extends Component {
         stringBeforeCursor: newStringBeforeCursor,
         cursorPosition: newCursorPosition,
       });
-    } 
+    }
+
+    //
   }
 
   handleCommand(command) {
@@ -208,7 +252,7 @@ class Home extends Component {
 
     return (
       <main className="Terminal" onKeyDown={this.handleInput} tabIndex={-1}>
-        <div className="TerminalLines">
+        <pre className="TerminalLines">
           {this.state.previousTextLines.map((line) => (
             <div>
               <span className="Terminal-Text">{line}</span>
@@ -220,7 +264,7 @@ class Home extends Component {
             <span className="Cursor">█</span>
             <span className="Terminal-Text">{renderStringAfterCursor()}</span>
           </div>
-        </div>
+        </pre>
       </main>
     );
   }
