@@ -8,13 +8,19 @@ import {
   TAB_KEY_CODE,
   DELETE_KEY_CODE,
   UP_ARROW_KEY_CODE,
+  DOWN_ARROW_KEY_CODE,
 } from "../../common/constants/keys.constants";
 import { ALL_COMMANDS } from "../../common/constants/commands.constants";
 import {
   DIVIDER,
   LINE_START,
 } from "../../common/constants/bells-and-whistles.constants";
-import { WELCOME_ASCII_ART, SALUTATIONS_3D_ASCII_ART, HELLO_HUMAN_3D_ASCII_ART, TERMINAL_NAME_3D_ASCII_ART } from "../../common/constants/ascii-art.constants";
+import {
+  WELCOME_ASCII_ART,
+  SALUTATIONS_3D_ASCII_ART,
+  HELLO_HUMAN_3D_ASCII_ART,
+  TERMINAL_NAME_3D_ASCII_ART,
+} from "../../common/constants/ascii-art.constants";
 import "./Home.css";
 
 class Home extends Component {
@@ -41,12 +47,12 @@ class Home extends Component {
     console.log("in welcome()");
     WELCOME_ASCII_ART.forEach((line) => {
       console.log("------------NEW LINE--------------");
-      line.split("").forEach((character) => { 
+      line.split("").forEach((character) => {
         console.log("------------NEW CHAR--------------");
-        console.log('character', character);
+        console.log("character", character);
         const input = {
           key: character,
-          keyCode: " "
+          keyCode: " ",
         };
         this.handleInput(input);
       });
@@ -74,9 +80,15 @@ class Home extends Component {
     // let audio = new Audio('../../assets/sound/keys.mp3');
     // audio.play();
     console.log("newInput", newInput);
-    console.log('newInput.keyCode === UP_ARROW_KEY_CODE', newInput.keyCode === UP_ARROW_KEY_CODE);
-    console.log('this.state.commandIndex', this.state.commandIndex);
-    console.log('this.state.previousCommands.length', this.state.previousCommands.length);
+    console.log(
+      "newInput.keyCode === UP_ARROW_KEY_CODE",
+      newInput.keyCode === UP_ARROW_KEY_CODE
+    );
+    console.log("this.state.commandIndex", this.state.commandIndex);
+    console.log(
+      "this.state.previousCommands.length",
+      this.state.previousCommands.length
+    );
 
     if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
@@ -119,7 +131,7 @@ class Home extends Component {
         stringAfterCursor: "",
         cursorPosition: 0,
         previousTextLines: this.handleCommand(this.state.currentTextLine),
-        previousCommands: previousCommands
+        previousCommands: previousCommands,
       });
     } else if (newInput.keyCode === TAB_KEY_CODE) {
       newInput.preventDefault();
@@ -134,18 +146,35 @@ class Home extends Component {
           stringBeforeCursor: autocompleteText.toLowerCase(),
         });
       }
-    } else if (newInput.keyCode === UP_ARROW_KEY_CODE && this.state.commandIndex < this.state.previousCommands.length) {
+    } else if (
+      newInput.keyCode === UP_ARROW_KEY_CODE && 
+      this.state.previousCommands[this.state.commandIndex] 
+    ) {
       newInput.preventDefault();
-      const command = this.state.previousCommands[this.state.commandIndex];
-
-      console.log('this.state.previousCommands', this.state.previousCommands);
-      // console.log('commandIndex', commandIndex);
-      console.log('command', command);
+      const commandIndex = this.state.commandIndex;
+      const command = this.state.previousCommands[commandIndex];
 
       this.setState({
         currentTextLine: command,
         stringBeforeCursor: command,
-        commandIndex: this.state.commandIndex + 1
+        commandIndex: commandIndex + 1,
+      });
+    } else if (
+      newInput.keyCode === DOWN_ARROW_KEY_CODE &&
+      this.state.previousCommands[this.state.commandIndex] 
+    ) {
+      newInput.preventDefault();
+      const commandIndex = this.state.commandIndex;
+      const command = this.state.previousCommands[commandIndex];
+
+      console.log("this.state.previousCommands", this.state.previousCommands);
+      console.log('this.state.commandIndex', this.state.commandIndex);
+      console.log("command", command);
+
+      this.setState({
+        currentTextLine: command,
+        stringBeforeCursor: command,
+        commandIndex: commandIndex - 1,
       });
     } else if (newInput.keyCode === LEFT_ARROW_KEY_CODE) {
       const newCursorPosition =

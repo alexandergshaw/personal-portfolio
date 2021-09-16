@@ -5,4 +5,5 @@ export const SPACE_KEY_CODE = 32;
 export const LEFT_ARROW_KEY_CODE = 37;
 export const UP_ARROW_KEY_CODE = 38;
 export const RIGHT_ARROW_KEY_CODE = 39;
+export const DOWN_ARROW_KEY_CODE = 40;
 export const DELETE_KEY_CODE = 46;
