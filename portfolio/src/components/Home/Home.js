@@ -14,6 +14,7 @@ import { ALL_COMMANDS } from "../../common/constants/commands.constants";
 import {
   DIVIDER,
   LINE_START,
+  AUTO_PRINT_DELAY
 } from "../../common/constants/bells-and-whistles.constants";
 import {
   WELCOME_ASCII_ART,
@@ -22,8 +23,8 @@ import {
   TERMINAL_NAME_3D_ASCII_ART,
 } from "../../common/constants/ascii-art.constants";
 import "./Home.css";
-import useSound from 'use-sound';
-import keyPressSound from '../../assets/sound/keys.mp3';
+import useSound from "use-sound";
+import keyPressSound from "../../assets/sound/keys.mp3";
 
 class Home extends Component {
   constructor() {
@@ -32,6 +33,7 @@ class Home extends Component {
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCommand = this.handleCommand.bind(this);
     this.goToNextLine = this.goToNextLine.bind(this);
+    this.outputCharacter = this.outputCharacter.bind(this);
 
     this.state = {
       currentTextLine: "",
@@ -42,26 +44,43 @@ class Home extends Component {
       stringBeforeCursor: "",
       stringAfterCursor: "",
     };
-    this.keyPressAudio = new Audio('../../assets/sound/keys.mp3');
-    // this.welcome();
-
+    this.keyPressAudio = new Audio("../../assets/sound/keys.mp3");
+    this.welcome();
   }
 
   welcome() {
-    console.log("in welcome()");
-    WELCOME_ASCII_ART.forEach((line) => {
-      console.log("------------NEW LINE--------------");
-      line.split("").forEach((character) => {
-        console.log("------------NEW CHAR--------------");
-        console.log("character", character);
-        const input = {
-          key: character,
-          keyCode: " ",
-        };
-        this.handleKeyPress(input);
-      });
-      this.goToNextLine(line);
+    const welcomeString = "welcome";
+    const welcomeArray = welcomeString.split("");
+
+    console.log('welcomeArray', welcomeArray);
+
+    welcomeArray.forEach((char, i) => {
+      this.outputCharacter(char, i);
     });
+
+    // console.log("in welcome()");
+    // WELCOME_ASCII_ART.forEach((line) => {
+    //   console.log("------------NEW LINE--------------");
+    //   line.split("").forEach((character) => {
+    //     console.log("------------NEW CHAR--------------");
+    //     console.log("character", character);
+    //     const input = {
+    //       key: character,
+    //       keyCode: " ",
+    //     };
+    //     this.handleKeyPress(input);
+    //   });
+    //   this.goToNextLine(line);
+    // });
+  }
+
+  outputCharacter(char, index) {
+    setTimeout(() => {
+      this.handleKeyPress({
+        key: char,
+        keyCode: "",
+      });
+    }, AUTO_PRINT_DELAY * index);
   }
 
   goToNextLine(line) {
@@ -85,12 +104,12 @@ class Home extends Component {
 
     if (playPromise !== undefined) {
       playPromise
-        .then(_ => {
+        .then((_) => {
           // Automatic playback started!
           // Show playing UI.
           console.log("audio played auto");
         })
-        .catch(error => {
+        .catch((error) => {
           // Auto-play was prevented
           // Show paused UI.
           console.log("playback prevented: ", error);
