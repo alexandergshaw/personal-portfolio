@@ -74,31 +74,9 @@ class Home extends Component {
     });
   }
 
-  iterateOverString(string, index) {
-    setTimeout(() => {
-      console.log("string", string);
-      const chars = string.split("");
-      chars.forEach((char, i) => {
-        this.outputCharacter(char, i);
-      });
-    }, DELAY_BETWEEN_CHARACTERS * index * string.length);
-  }
-
-  outputCharacter(char, index) {
-    setTimeout(() => {
-      this.handleKeyPress({
-        key: char,
-        keyCode: "",
-      });
-    }, DELAY_BETWEEN_CHARACTERS * index);
-  }
-
   goToNextLine(line) {
-    console.log("in goToNextLine");
     const previousLines = this.state.previousTextLines;
     previousLines.push(line);
-
-    console.log("previousLines", previousLines);
 
     this.setState({
       currentTextLine: "",
