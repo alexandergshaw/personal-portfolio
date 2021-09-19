@@ -14,7 +14,8 @@ import { ALL_COMMANDS } from "../../common/constants/commands.constants";
 import {
   DIVIDER,
   LINE_START,
-  AUTO_PRINT_DELAY
+  AUTO_PRINT_DELAY,
+  DELAY_BEFORE_NEXT_LINE
 } from "../../common/constants/bells-and-whistles.constants";
 import {
   WELCOME_ASCII_ART,
@@ -55,23 +56,29 @@ class Home extends Component {
     const welcomeString = "welcome";
     const welcomeArray = welcomeString.split("");
 
-    console.log('welcomeArray', welcomeArray);
+    console.log("welcomeArray", welcomeArray);
 
     strings.forEach((string, i) => {
       setTimeout(() => {
         const stringArray = string.split("");
         stringArray.forEach((char, j) => {
-          setTimeout(() => this.handleKeyPress({
-            key: char,
-            keyCode: "",
-          }), AUTO_PRINT_DELAY * j);
+          setTimeout(
+            () =>
+              this.handleKeyPress({
+                key: char,
+                keyCode: "",
+              }),
+            AUTO_PRINT_DELAY * j
+          );
         });
-    
-        setTimeout(() => this.goToNextLine(string), AUTO_PRINT_DELAY * welcomeArray.length);
-      }, AUTO_PRINT_DELAY * welcomeArray.length * i);
+
+        setTimeout(
+          () => this.goToNextLine(string),
+          AUTO_PRINT_DELAY * welcomeArray.length
+        );
+      }, (AUTO_PRINT_DELAY * welcomeArray.length * i) + DELAY_BEFORE_NEXT_LINE);
     });
-    
-    
+
     // strings.forEach((string, i) => {
     //   this.iterateOverString(string, i);
     // });
@@ -94,7 +101,7 @@ class Home extends Component {
 
   iterateOverString(string, index) {
     setTimeout(() => {
-      console.log('string', string);
+      console.log("string", string);
       const chars = string.split("");
       chars.forEach((char, i) => {
         this.outputCharacter(char, i);
