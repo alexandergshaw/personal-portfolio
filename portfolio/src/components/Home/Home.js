@@ -151,7 +151,9 @@ class Home extends Component {
       this.setState({
         currentTextLine: command,
         stringBeforeCursor: command,
-        commandIndex: newCommandIndex
+        stringAfterCursor: "",
+        commandIndex: newCommandIndex,
+        cursorPosition: command.length
       });
     } else if (newInput.keyCode === DOWN_ARROW_KEY_CODE) {
       newInput.preventDefault();
@@ -162,7 +164,9 @@ class Home extends Component {
       this.setState({
         currentTextLine: command,
         stringBeforeCursor: command,
+        stringAfterCursor: "",
         commandIndex: newCommandIndex,
+        cursorPosition: command.length
       });
     } else if (newInput.keyCode === LEFT_ARROW_KEY_CODE) {
       const newCursorPosition =
