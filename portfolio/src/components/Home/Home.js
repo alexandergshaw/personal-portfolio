@@ -143,7 +143,6 @@ class Home extends Component {
         });
       }
     } else if (newInput.keyCode === UP_ARROW_KEY_CODE) {
-
       newInput.preventDefault();
       const newCommandIndex = this.state.previousCommands[this.state.commandIndex - 1] ? this.state.commandIndex - 1 : this.state.commandIndex;
       const command = this.state.previousCommands[newCommandIndex];
@@ -155,17 +154,9 @@ class Home extends Component {
       });
     } else if (newInput.keyCode === DOWN_ARROW_KEY_CODE) {
       newInput.preventDefault();
-      const commandIndex = this.state.commandIndex;
-      let command = "";
-      let newCommandIndex = commandIndex;
-
-      if (commandIndex < this.state.previousCommands.length) {
-        command = this.state.previousCommands[commandIndex];
-        newCommandIndex = commandIndex + 1;
-      } else {
-        command = "";
-        newCommandIndex = commandIndex;
-      }
+      
+      const newCommandIndex = this.state.commandIndex < this.state.previousCommands.length ? this.state.commandIndex + 1 : this.state.commandIndex;
+      const command = this.state.previousCommands[newCommandIndex] ? this.state.previousCommands[newCommandIndex] : "";
 
       this.setState({
         currentTextLine: command,
