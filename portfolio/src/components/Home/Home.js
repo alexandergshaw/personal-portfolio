@@ -96,6 +96,8 @@ class Home extends Component {
           console.log("playback prevented: ", error);
         });
     }
+    // let audio = new Audio('../../assets/sound/keys.mp3');
+    // audio.play();
 
     if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
@@ -129,8 +131,9 @@ class Home extends Component {
         " " +
         this.state.currentTextLine.slice(this.state.cursorPosition);
       previousLines.push(LINE_START + priorLine);
+
       let previousCommands = this.state.previousCommands;
-      previousCommands.unshift(priorLine);
+      previousCommands.push(priorLine);
 
       this.setState({
         currentTextLine: "",
@@ -139,6 +142,7 @@ class Home extends Component {
         cursorPosition: 0,
         previousTextLines: this.handleCommand(this.state.currentTextLine),
         previousCommands: previousCommands,
+        commandIndex: this.state.previousCommands.length,
       });
     } else if (newInput.keyCode === TAB_KEY_CODE) {
       newInput.preventDefault();
@@ -149,40 +153,44 @@ class Home extends Component {
 
       if (autocompleteText) {
         this.setState({
-          currentTextLine: autocompleteText,
+          currentTextLine: autocompleteText.toLowerCase(),
           stringBeforeCursor: autocompleteText.toLowerCase(),
+          cursorPosition: autocompleteText.length,
         });
       }
-    } else if (
-      newInput.keyCode === UP_ARROW_KEY_CODE && 
-      this.state.previousCommands[this.state.commandIndex] 
-    ) {
+    } else if (newInput.keyCode === UP_ARROW_KEY_CODE) {
       newInput.preventDefault();
-      const commandIndex = this.state.commandIndex;
-      const command = this.state.previousCommands[commandIndex];
+      const newCommandIndex = this.state.previousCommands[
+        this.state.commandIndex - 1
+      ]
+        ? this.state.commandIndex - 1
+        : this.state.commandIndex;
+      const command = this.state.previousCommands[newCommandIndex];
 
       this.setState({
         currentTextLine: command,
         stringBeforeCursor: command,
-        commandIndex: commandIndex + 1,
+        stringAfterCursor: "",
+        commandIndex: newCommandIndex,
+        cursorPosition: command.length,
       });
-    } else if (
-      newInput.keyCode === DOWN_ARROW_KEY_CODE &&
-      this.state.previousCommands[this.state.commandIndex] 
-    ) {
-      // todo: also make command line go back to blank
+    } else if (newInput.keyCode === DOWN_ARROW_KEY_CODE) {
       newInput.preventDefault();
-      const commandIndex = this.state.commandIndex;
-      const command = this.state.previousCommands[commandIndex];
 
-      console.log("this.state.previousCommands", this.state.previousCommands);
-      console.log('this.state.commandIndex', this.state.commandIndex);
-      console.log("command", command);
+      const newCommandIndex =
+        this.state.commandIndex < this.state.previousCommands.length
+          ? this.state.commandIndex + 1
+          : this.state.commandIndex;
+      const command = this.state.previousCommands[newCommandIndex]
+        ? this.state.previousCommands[newCommandIndex]
+        : "";
 
       this.setState({
         currentTextLine: command,
         stringBeforeCursor: command,
-        commandIndex: commandIndex - 1,
+        stringAfterCursor: "",
+        commandIndex: newCommandIndex,
+        cursorPosition: command.length,
       });
     } else if (newInput.keyCode === LEFT_ARROW_KEY_CODE) {
       const newCursorPosition =
@@ -236,23 +244,33 @@ class Home extends Component {
     const upperCaseCommand = command.toUpperCase();
     let previousLines = this.state.previousTextLines;
 
-    if (upperCaseCommand === ALL_COMMANDS.HELP.toUpperCase()) {
+    if (upperCaseCommand === ALL_COMMANDS.HELP.string.toUpperCase()) {
       previousLines.push(DIVIDER);
+      previousLines.push(" ");
       previousLines.push("All available commands");
-      previousLines.push("projects - display all projects");
-      previousLines.push("about - display info about the developer");
-      previousLines.push("help - display all commands");
-    } else if (upperCaseCommand === ALL_COMMANDS.PROJECTS.toUpperCase()) {
+
+      Object.values(ALL_COMMANDS).map((command) => {
+        previousLines.push(command.string + "\t\t" + command.description);
+      });
+
+      previousLines.push(" ");
+    } else if (
+      upperCaseCommand === ALL_COMMANDS.PROJECTS.string.toUpperCase()
+    ) {
       previousLines = [];
       // clear screen and display projects
-    } else if (upperCaseCommand === ALL_COMMANDS.ABOUT.toUpperCase()) {
+    } else if (upperCaseCommand === ALL_COMMANDS.ABOUT.string.toUpperCase()) {
       previousLines = [];
       // clear screen and display things a recruiter needs to see
       // include ascii art of myself?
+    } else if (upperCaseCommand === ALL_COMMANDS.CLEAR.string.toUpperCase()) {
+      previousLines = [];
     } else {
       let mostLikelyCommand = this.determineMostLikely(
         command,
-        Object.values(ALL_COMMANDS).map((command) => command.toUpperCase())
+        Object.values(ALL_COMMANDS).map((command) =>
+          command.string.toUpperCase()
+        )
       );
       previousLines.push(DIVIDER);
       previousLines.push(
@@ -289,6 +307,8 @@ class Home extends Component {
       return "";
     }
   }
+
+  displayCommands() {}
 
   render() {
     let { stringBeforeCursor, stringAfterCursor } = this.state;
