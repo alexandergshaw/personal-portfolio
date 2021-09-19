@@ -30,7 +30,6 @@ class Home extends Component {
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCommand = this.handleCommand.bind(this);
     this.goToNextLine = this.goToNextLine.bind(this);
-    this.clearScreen = this.clearScreen.bind(this);
 
     this.state = {
       currentTextLine: "",
@@ -126,7 +125,6 @@ class Home extends Component {
         previousCommands: previousCommands,
         commandIndex: this.state.previousCommands.length,
       });
-
     } else if (newInput.keyCode === TAB_KEY_CODE) {
       newInput.preventDefault();
       const autocompleteText = this.autocomplete(
@@ -138,12 +136,16 @@ class Home extends Component {
         this.setState({
           currentTextLine: autocompleteText.toLowerCase(),
           stringBeforeCursor: autocompleteText.toLowerCase(),
-          cursorPosition: autocompleteText.length
+          cursorPosition: autocompleteText.length,
         });
       }
     } else if (newInput.keyCode === UP_ARROW_KEY_CODE) {
       newInput.preventDefault();
-      const newCommandIndex = this.state.previousCommands[this.state.commandIndex - 1] ? this.state.commandIndex - 1 : this.state.commandIndex;
+      const newCommandIndex = this.state.previousCommands[
+        this.state.commandIndex - 1
+      ]
+        ? this.state.commandIndex - 1
+        : this.state.commandIndex;
       const command = this.state.previousCommands[newCommandIndex];
 
       this.setState({
@@ -151,20 +153,25 @@ class Home extends Component {
         stringBeforeCursor: command,
         stringAfterCursor: "",
         commandIndex: newCommandIndex,
-        cursorPosition: command.length
+        cursorPosition: command.length,
       });
     } else if (newInput.keyCode === DOWN_ARROW_KEY_CODE) {
       newInput.preventDefault();
-      
-      const newCommandIndex = this.state.commandIndex < this.state.previousCommands.length ? this.state.commandIndex + 1 : this.state.commandIndex;
-      const command = this.state.previousCommands[newCommandIndex] ? this.state.previousCommands[newCommandIndex] : "";
+
+      const newCommandIndex =
+        this.state.commandIndex < this.state.previousCommands.length
+          ? this.state.commandIndex + 1
+          : this.state.commandIndex;
+      const command = this.state.previousCommands[newCommandIndex]
+        ? this.state.previousCommands[newCommandIndex]
+        : "";
 
       this.setState({
         currentTextLine: command,
         stringBeforeCursor: command,
         stringAfterCursor: "",
         commandIndex: newCommandIndex,
-        cursorPosition: command.length
+        cursorPosition: command.length,
       });
     } else if (newInput.keyCode === LEFT_ARROW_KEY_CODE) {
       const newCursorPosition =
@@ -218,25 +225,33 @@ class Home extends Component {
     const upperCaseCommand = command.toUpperCase();
     let previousLines = this.state.previousTextLines;
 
-    if (upperCaseCommand === ALL_COMMANDS.HELP.toUpperCase()) {
+    if (upperCaseCommand === ALL_COMMANDS.HELP.string.toUpperCase()) {
       previousLines.push(DIVIDER);
+      previousLines.push(" ");
       previousLines.push("All available commands");
-      previousLines.push("projects - display all projects");
-      previousLines.push("about - display info about the developer");
-      previousLines.push("help - display all commands");
-    } else if (upperCaseCommand === ALL_COMMANDS.PROJECTS.toUpperCase()) {
+
+      Object.values(ALL_COMMANDS).map((command) => {
+        previousLines.push(command.string + "\t\t" + command.description);
+      });
+
+      previousLines.push(" ");
+    } else if (
+      upperCaseCommand === ALL_COMMANDS.PROJECTS.string.toUpperCase()
+    ) {
       previousLines = [];
       // clear screen and display projects
-    } else if (upperCaseCommand === ALL_COMMANDS.ABOUT.toUpperCase()) {
+    } else if (upperCaseCommand === ALL_COMMANDS.ABOUT.string.toUpperCase()) {
       previousLines = [];
       // clear screen and display things a recruiter needs to see
       // include ascii art of myself?
-    } else if (upperCaseCommand === ALL_COMMANDS.CLEAR.toUpperCase()) {
+    } else if (upperCaseCommand === ALL_COMMANDS.CLEAR.string.toUpperCase()) {
       previousLines = [];
     } else {
       let mostLikelyCommand = this.determineMostLikely(
         command,
-        Object.values(ALL_COMMANDS).map((command) => command.toUpperCase())
+        Object.values(ALL_COMMANDS).map((command) =>
+          command.string.toUpperCase()
+        )
       );
       previousLines.push(DIVIDER);
       previousLines.push(
@@ -274,11 +289,7 @@ class Home extends Component {
     }
   }
 
-  clearScreen() {
-    this.setState({
-      previousLines: []
-    });
-  }
+  displayCommands() {}
 
   render() {
     let { stringBeforeCursor, stringAfterCursor } = this.state;
