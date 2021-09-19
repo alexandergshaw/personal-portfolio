@@ -79,16 +79,9 @@ class Home extends Component {
   handleInput(newInput) {
     // let audio = new Audio('../../assets/sound/keys.mp3');
     // audio.play();
-    console.log("newInput", newInput);
-    console.log(
-      "newInput.keyCode === UP_ARROW_KEY_CODE",
-      newInput.keyCode === UP_ARROW_KEY_CODE
-    );
-    console.log("this.state.commandIndex", this.state.commandIndex);
-    console.log(
-      "this.state.previousCommands.length",
-      this.state.previousCommands.length
-    );
+
+    console.log("commandIndex", this.state.commandIndex);
+    console.log("previousCommands", this.state.previousCommands);
 
     if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
@@ -122,8 +115,9 @@ class Home extends Component {
         " " +
         this.state.currentTextLine.slice(this.state.cursorPosition);
       previousLines.push(LINE_START + priorLine);
+
       let previousCommands = this.state.previousCommands;
-      previousCommands.unshift(priorLine);
+      previousCommands.push(priorLine);
 
       this.setState({
         currentTextLine: "",
@@ -132,6 +126,7 @@ class Home extends Component {
         cursorPosition: 0,
         previousTextLines: this.handleCommand(this.state.currentTextLine),
         previousCommands: previousCommands,
+        commandIndex: this.state.previousCommands.length - 1,
       });
     } else if (newInput.keyCode === TAB_KEY_CODE) {
       newInput.preventDefault();
@@ -146,35 +141,36 @@ class Home extends Component {
           stringBeforeCursor: autocompleteText.toLowerCase(),
         });
       }
-    } else if (
-      newInput.keyCode === UP_ARROW_KEY_CODE && 
-      this.state.previousCommands[this.state.commandIndex] 
-    ) {
+    } else if (newInput.keyCode === UP_ARROW_KEY_CODE) {
       newInput.preventDefault();
       const commandIndex = this.state.commandIndex;
       const command = this.state.previousCommands[commandIndex];
 
+      const newCommandIndex = commandIndex - 1;
+
       this.setState({
         currentTextLine: command,
         stringBeforeCursor: command,
-        commandIndex: commandIndex + 1,
+        commandIndex: this.state.previousCommands[newCommandIndex]
+          ? newCommandIndex
+          : commandIndex,
       });
-    } else if (
-      newInput.keyCode === DOWN_ARROW_KEY_CODE &&
-      this.state.previousCommands[this.state.commandIndex] 
-    ) {
+    } else if (newInput.keyCode === DOWN_ARROW_KEY_CODE) {
       newInput.preventDefault();
       const commandIndex = this.state.commandIndex;
-      const command = this.state.previousCommands[commandIndex];
+      let command = "";
+      let newCommandIndex = commandIndex;
 
-      console.log("this.state.previousCommands", this.state.previousCommands);
-      console.log('this.state.commandIndex', this.state.commandIndex);
-      console.log("command", command);
+      if (this.state.previousCommands[commandIndex]) {
+        command = this.state.previousCommands[commandIndex];
+        newCommandIndex = commandIndex + 1;
+      }
+
 
       this.setState({
         currentTextLine: command,
         stringBeforeCursor: command,
-        commandIndex: commandIndex - 1,
+        commandIndex: newCommandIndex,
       });
     } else if (newInput.keyCode === LEFT_ARROW_KEY_CODE) {
       const newCursorPosition =
