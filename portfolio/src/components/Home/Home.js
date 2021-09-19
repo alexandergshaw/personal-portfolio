@@ -57,15 +57,21 @@ class Home extends Component {
 
     console.log('welcomeArray', welcomeArray);
 
-    welcomeArray.forEach((char, i) => {
-      setTimeout(() => this.handleKeyPress({
-        key: char,
-        keyCode: "",
-      }), AUTO_PRINT_DELAY * i);
+    strings.forEach((string, i) => {
+      setTimeout(() => {
+        const stringArray = string.split("");
+        stringArray.forEach((char, j) => {
+          setTimeout(() => this.handleKeyPress({
+            key: char,
+            keyCode: "",
+          }), AUTO_PRINT_DELAY * j);
+        });
+    
+        setTimeout(() => this.goToNextLine(string), AUTO_PRINT_DELAY * welcomeArray.length);
+      }, AUTO_PRINT_DELAY * welcomeArray.length * i);
     });
-
-    setTimeout(() => this.goToNextLine(welcomeString), AUTO_PRINT_DELAY * welcomeArray.length);
-
+    
+    
     // strings.forEach((string, i) => {
     //   this.iterateOverString(string, i);
     // });
