@@ -47,20 +47,13 @@ class Home extends Component {
       stringAfterCursor: "",
     };
     this.keyPressAudio = new Audio("../../assets/sound/keys.mp3");
-    this.welcome(SALUTATIONS_3D_ASCII_ART);
+    this.welcome(WELCOME_ASCII_ART);
   }
 
   welcome(strings) {
-    // const strings = ["hello", "welcome", "hi"];
-
-    const welcomeString = "welcome";
-    const welcomeArray = welcomeString.split("");
-
-    console.log("welcomeArray", welcomeArray);
-
     strings.forEach((string, i) => {
+      const stringArray = string.split("");
       setTimeout(() => {
-        const stringArray = string.split("");
         stringArray.forEach((char, j) => {
           setTimeout(
             () =>
@@ -74,9 +67,9 @@ class Home extends Component {
 
         setTimeout(
           () => this.goToNextLine(string),
-          AUTO_PRINT_DELAY * welcomeArray.length
+          AUTO_PRINT_DELAY * stringArray.length
         );
-      }, (AUTO_PRINT_DELAY * welcomeArray.length * i) + DELAY_BEFORE_NEXT_LINE);
+      }, (AUTO_PRINT_DELAY * stringArray.length * i) + DELAY_BEFORE_NEXT_LINE);
     });
 
     // strings.forEach((string, i) => {
