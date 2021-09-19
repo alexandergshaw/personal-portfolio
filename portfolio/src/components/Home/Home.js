@@ -126,8 +126,9 @@ class Home extends Component {
         cursorPosition: 0,
         previousTextLines: this.handleCommand(this.state.currentTextLine),
         previousCommands: previousCommands,
-        commandIndex: this.state.previousCommands.length - 1,
+        commandIndex: this.state.previousCommands.length,
       });
+
     } else if (newInput.keyCode === TAB_KEY_CODE) {
       newInput.preventDefault();
       const autocompleteText = this.autocomplete(
@@ -142,18 +143,15 @@ class Home extends Component {
         });
       }
     } else if (newInput.keyCode === UP_ARROW_KEY_CODE) {
-      newInput.preventDefault();
-      const commandIndex = this.state.commandIndex;
-      const command = this.state.previousCommands[commandIndex];
 
-      const newCommandIndex = commandIndex - 1;
+      newInput.preventDefault();
+      const newCommandIndex = this.state.previousCommands[this.state.commandIndex - 1] ? this.state.commandIndex - 1 : this.state.commandIndex;
+      const command = this.state.previousCommands[newCommandIndex];
 
       this.setState({
         currentTextLine: command,
         stringBeforeCursor: command,
-        commandIndex: this.state.previousCommands[newCommandIndex]
-          ? newCommandIndex
-          : commandIndex,
+        commandIndex: newCommandIndex
       });
     } else if (newInput.keyCode === DOWN_ARROW_KEY_CODE) {
       newInput.preventDefault();
@@ -161,11 +159,13 @@ class Home extends Component {
       let command = "";
       let newCommandIndex = commandIndex;
 
-      if (this.state.previousCommands[commandIndex]) {
+      if (commandIndex < this.state.previousCommands.length) {
         command = this.state.previousCommands[commandIndex];
         newCommandIndex = commandIndex + 1;
+      } else {
+        command = "";
+        newCommandIndex = commandIndex;
       }
-
 
       this.setState({
         currentTextLine: command,
