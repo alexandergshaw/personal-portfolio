@@ -138,8 +138,9 @@ class Home extends Component {
 
       if (autocompleteText) {
         this.setState({
-          currentTextLine: autocompleteText,
+          currentTextLine: autocompleteText.toLowerCase(),
           stringBeforeCursor: autocompleteText.toLowerCase(),
+          cursorPosition: autocompleteText.length
         });
       }
     } else if (newInput.keyCode === UP_ARROW_KEY_CODE) {
