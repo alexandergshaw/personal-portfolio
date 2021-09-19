@@ -22,12 +22,14 @@ import {
   TERMINAL_NAME_3D_ASCII_ART,
 } from "../../common/constants/ascii-art.constants";
 import "./Home.css";
+import useSound from 'use-sound';
+import keyPressSound from '../../assets/sound/keys.mp3';
 
 class Home extends Component {
   constructor() {
     super();
     this.welcome = this.welcome.bind(this);
-    this.handleInput = this.handleInput.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCommand = this.handleCommand.bind(this);
     this.goToNextLine = this.goToNextLine.bind(this);
 
@@ -40,7 +42,9 @@ class Home extends Component {
       stringBeforeCursor: "",
       stringAfterCursor: "",
     };
+    this.keyPressAudio = new Audio('../../assets/sound/keys.mp3');
     // this.welcome();
+
   }
 
   welcome() {
@@ -54,7 +58,7 @@ class Home extends Component {
           key: character,
           keyCode: " ",
         };
-        this.handleInput(input);
+        this.handleKeyPress(input);
       });
       this.goToNextLine(line);
     });
@@ -76,19 +80,22 @@ class Home extends Component {
     });
   }
 
-  handleInput(newInput) {
-    // let audio = new Audio('../../assets/sound/keys.mp3');
-    // audio.play();
-    console.log("newInput", newInput);
-    console.log(
-      "newInput.keyCode === UP_ARROW_KEY_CODE",
-      newInput.keyCode === UP_ARROW_KEY_CODE
-    );
-    console.log("this.state.commandIndex", this.state.commandIndex);
-    console.log(
-      "this.state.previousCommands.length",
-      this.state.previousCommands.length
-    );
+  handleKeyPress(newInput) {
+    const playPromise = this.keyPressAudio.play();
+
+    if (playPromise !== undefined) {
+      playPromise
+        .then(_ => {
+          // Automatic playback started!
+          // Show playing UI.
+          console.log("audio played auto");
+        })
+        .catch(error => {
+          // Auto-play was prevented
+          // Show paused UI.
+          console.log("playback prevented: ", error);
+        });
+    }
 
     if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
@@ -163,6 +170,7 @@ class Home extends Component {
       newInput.keyCode === DOWN_ARROW_KEY_CODE &&
       this.state.previousCommands[this.state.commandIndex] 
     ) {
+      // todo: also make command line go back to blank
       newInput.preventDefault();
       const commandIndex = this.state.commandIndex;
       const command = this.state.previousCommands[commandIndex];
@@ -298,7 +306,7 @@ class Home extends Component {
     };
 
     return (
-      <main className="Terminal" onKeyDown={this.handleInput} tabIndex={-1}>
+      <main className="Terminal" onKeyDown={this.handleKeyPress} tabIndex={-1}>
         <pre className="TerminalLines">
           {this.state.previousTextLines.map((line) => (
             <div>
