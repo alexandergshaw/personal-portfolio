@@ -47,11 +47,11 @@ class Home extends Component {
       stringAfterCursor: "",
     };
     this.keyPressAudio = new Audio("../../assets/sound/keys.mp3");
-    this.welcome();
+    this.welcome(SALUTATIONS_3D_ASCII_ART);
   }
 
-  welcome() {
-    const strings = ["hello", "welcome", "hi"];
+  welcome(strings) {
+    // const strings = ["hello", "welcome", "hi"];
 
     const welcomeString = "welcome";
     const welcomeArray = welcomeString.split("");
