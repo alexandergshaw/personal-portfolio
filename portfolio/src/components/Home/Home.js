@@ -14,8 +14,8 @@ import { ALL_COMMANDS } from "../../common/constants/commands.constants";
 import {
   DIVIDER,
   LINE_START,
-  AUTO_PRINT_DELAY,
-  DELAY_BEFORE_NEXT_LINE
+  DELAY_BETWEEN_CHARACTERS,
+  DELAY_BETWEEN_LINES
 } from "../../common/constants/bells-and-whistles.constants";
 import {
   WELCOME_ASCII_ART,
@@ -30,7 +30,7 @@ import keyPressSound from "../../assets/sound/keys.mp3";
 class Home extends Component {
   constructor() {
     super();
-    this.welcome = this.welcome.bind(this);
+    this.autoOutputText = this.autoOutputText.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCommand = this.handleCommand.bind(this);
     this.goToNextLine = this.goToNextLine.bind(this);
@@ -47,10 +47,11 @@ class Home extends Component {
       stringAfterCursor: "",
     };
     this.keyPressAudio = new Audio("../../assets/sound/keys.mp3");
-    this.welcome(SALUTATIONS_3D_ASCII_ART);
+    this.autoOutputText(SALUTATIONS_3D_ASCII_ART, DELAY_BETWEEN_CHARACTERS);
   }
 
-  welcome(strings) {
+  autoOutputText(strings, delayBetweenCharacters) {
+    const delayBetweenLines = delayBetweenCharacters * 2;
     strings.forEach((string, i) => {
       const stringArray = string.split("");
       setTimeout(() => {
@@ -61,35 +62,16 @@ class Home extends Component {
                 key: char,
                 keyCode: "",
               }),
-            AUTO_PRINT_DELAY * j
+              delayBetweenCharacters * j
           );
         });
 
         setTimeout(
           () => this.goToNextLine(string),
-          AUTO_PRINT_DELAY * stringArray.length
+          delayBetweenCharacters * stringArray.length
         );
-      }, (AUTO_PRINT_DELAY * stringArray.length * i) + DELAY_BEFORE_NEXT_LINE);
+      }, (delayBetweenCharacters * stringArray.length * i) + delayBetweenLines);
     });
-
-    // strings.forEach((string, i) => {
-    //   this.iterateOverString(string, i);
-    // });
-
-    // console.log("in welcome()");
-    // WELCOME_ASCII_ART.forEach((line) => {
-    //   console.log("------------NEW LINE--------------");
-    //   line.split("").forEach((character) => {
-    //     console.log("------------NEW CHAR--------------");
-    //     console.log("character", character);
-    //     const input = {
-    //       key: character,
-    //       keyCode: " ",
-    //     };
-    //     this.handleKeyPress(input);
-    //   });
-    //   this.goToNextLine(line);
-    // });
   }
 
   iterateOverString(string, index) {
@@ -99,7 +81,7 @@ class Home extends Component {
       chars.forEach((char, i) => {
         this.outputCharacter(char, i);
       });
-    }, AUTO_PRINT_DELAY * index * string.length);
+    }, DELAY_BETWEEN_CHARACTERS * index * string.length);
   }
 
   outputCharacter(char, index) {
@@ -108,7 +90,7 @@ class Home extends Component {
         key: char,
         keyCode: "",
       });
-    }, AUTO_PRINT_DELAY * index);
+    }, DELAY_BETWEEN_CHARACTERS * index);
   }
 
   goToNextLine(line) {
