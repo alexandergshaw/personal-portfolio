@@ -47,7 +47,7 @@ class Home extends Component {
       stringAfterCursor: "",
     };
     this.keyPressAudio = new Audio("../../assets/sound/keys.mp3");
-    this.welcome(WELCOME_ASCII_ART);
+    this.welcome(SALUTATIONS_3D_ASCII_ART);
   }
 
   welcome(strings) {
