@@ -34,6 +34,7 @@ class Home extends Component {
     this.handleCommand = this.handleCommand.bind(this);
     this.goToNextLine = this.goToNextLine.bind(this);
     this.outputCharacter = this.outputCharacter.bind(this);
+    this.iterateOverString = this.iterateOverString.bind(this);
 
     this.state = {
       currentTextLine: "",
@@ -49,14 +50,25 @@ class Home extends Component {
   }
 
   welcome() {
+    const strings = ["hello", "welcome", "hi"];
+
     const welcomeString = "welcome";
     const welcomeArray = welcomeString.split("");
 
     console.log('welcomeArray', welcomeArray);
 
     welcomeArray.forEach((char, i) => {
-      this.outputCharacter(char, i);
+      setTimeout(() => this.handleKeyPress({
+        key: char,
+        keyCode: "",
+      }), AUTO_PRINT_DELAY * i);
     });
+
+    setTimeout(() => this.goToNextLine(welcomeString), AUTO_PRINT_DELAY * welcomeArray.length);
+
+    // strings.forEach((string, i) => {
+    //   this.iterateOverString(string, i);
+    // });
 
     // console.log("in welcome()");
     // WELCOME_ASCII_ART.forEach((line) => {
@@ -72,6 +84,16 @@ class Home extends Component {
     //   });
     //   this.goToNextLine(line);
     // });
+  }
+
+  iterateOverString(string, index) {
+    setTimeout(() => {
+      console.log('string', string);
+      const chars = string.split("");
+      chars.forEach((char, i) => {
+        this.outputCharacter(char, i);
+      });
+    }, AUTO_PRINT_DELAY * index * string.length);
   }
 
   outputCharacter(char, index) {
