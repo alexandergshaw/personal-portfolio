@@ -27,9 +27,10 @@ class Home extends Component {
   constructor() {
     super();
     this.welcome = this.welcome.bind(this);
-    this.handleInput = this.handleInput.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCommand = this.handleCommand.bind(this);
     this.goToNextLine = this.goToNextLine.bind(this);
+    this.clearScreen = this.clearScreen.bind(this);
 
     this.state = {
       currentTextLine: "",
@@ -54,7 +55,7 @@ class Home extends Component {
           key: character,
           keyCode: " ",
         };
-        this.handleInput(input);
+        this.handleKeyPress(input);
       });
       this.goToNextLine(line);
     });
@@ -76,12 +77,9 @@ class Home extends Component {
     });
   }
 
-  handleInput(newInput) {
+  handleKeyPress(newInput) {
     // let audio = new Audio('../../assets/sound/keys.mp3');
     // audio.play();
-
-    console.log("commandIndex", this.state.commandIndex);
-    console.log("previousCommands", this.state.previousCommands);
 
     if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
@@ -233,6 +231,8 @@ class Home extends Component {
       previousLines = [];
       // clear screen and display things a recruiter needs to see
       // include ascii art of myself?
+    } else if (upperCaseCommand === ALL_COMMANDS.CLEAR.toUpperCase()) {
+      previousLines = [];
     } else {
       let mostLikelyCommand = this.determineMostLikely(
         command,
@@ -274,6 +274,12 @@ class Home extends Component {
     }
   }
 
+  clearScreen() {
+    this.setState({
+      previousLines: []
+    });
+  }
+
   render() {
     let { stringBeforeCursor, stringAfterCursor } = this.state;
 
@@ -290,7 +296,7 @@ class Home extends Component {
     };
 
     return (
-      <main className="Terminal" onKeyDown={this.handleInput} tabIndex={-1}>
+      <main className="Terminal" onKeyDown={this.handleKeyPress} tabIndex={-1}>
         <pre className="TerminalLines">
           {this.state.previousTextLines.map((line) => (
             <div>
