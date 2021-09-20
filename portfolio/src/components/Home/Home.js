@@ -15,7 +15,7 @@ import {
   DIVIDER,
   LINE_START,
   DELAY_BETWEEN_CHARACTERS,
-  DELAY_BETWEEN_LINES
+  DELAY_BETWEEN_LINES,
 } from "../../common/constants/bells-and-whistles.constants";
 import {
   WELCOME_ASCII_ART,
@@ -25,7 +25,8 @@ import {
 } from "../../common/constants/ascii-art.constants";
 import "./Home.css";
 import useSound from "use-sound";
-import keyPressSound from "../../assets/sound/keys.mp3";
+import keyPressSound from "../../assets/sounds/keys.mp3";
+import testGif from "../../assets/gifs/Animation.gif";
 
 class Home extends Component {
   constructor() {
@@ -34,8 +35,6 @@ class Home extends Component {
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCommand = this.handleCommand.bind(this);
     this.goToNextLine = this.goToNextLine.bind(this);
-    this.outputCharacter = this.outputCharacter.bind(this);
-    this.iterateOverString = this.iterateOverString.bind(this);
 
     this.state = {
       currentTextLine: "",
@@ -47,7 +46,7 @@ class Home extends Component {
       stringAfterCursor: "",
     };
     this.keyPressAudio = new Audio("../../assets/sound/keys.mp3");
-    this.autoOutputText(SALUTATIONS_3D_ASCII_ART, DELAY_BETWEEN_CHARACTERS);
+    // this.autoOutputText(SALUTATIONS_3D_ASCII_ART, DELAY_BETWEEN_CHARACTERS);
   }
 
   autoOutputText(strings, delayBetweenCharacters) {
@@ -62,7 +61,7 @@ class Home extends Component {
                 key: char,
                 keyCode: "",
               }),
-              delayBetweenCharacters * j
+            delayBetweenCharacters * j
           );
         });
 
@@ -70,7 +69,7 @@ class Home extends Component {
           () => this.goToNextLine(string),
           delayBetweenCharacters * stringArray.length
         );
-      }, (delayBetweenCharacters * stringArray.length * i) + delayBetweenLines);
+      }, delayBetweenCharacters * stringArray.length * i + delayBetweenLines);
     });
   }
 
@@ -346,6 +345,9 @@ class Home extends Component {
             <span className="Cursor">█</span>
             <span className="Terminal-Text">{renderStringAfterCursor()}</span>
           </div>
+          <span>
+            <img src={testGif} alt="loading..." />
+          </span>
         </pre>
       </main>
     );
