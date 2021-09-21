@@ -1,3 +1,7 @@
+.ProjectScreenCap {
+  width: 200px;
+}
+
 .Terminal {
   background-color: black;
   background-image: radial-gradient(rgba(20, 59, 28), black 120%);
@@ -34,7 +38,7 @@
   }
 }
 
-.Terminal-Text {
+.TerminalText {
   text-shadow: 0 0 5px #c8c8c8;
 }
 

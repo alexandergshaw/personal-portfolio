@@ -25,8 +25,9 @@ import {
 } from "../../common/constants/ascii-art.constants";
 import "./Home.css";
 import useSound from "use-sound";
-import keyPressSound from "../../assets/sounds/keys.mp3";
+import keyPressSound from "../../assets/sounds/key-press-1.mp3";
 import testGif from "../../assets/gifs/Animation.gif";
+import { PROJECTS_DISPLAY_STRINGS, LOADING_STRINGS } from "../../common/constants/auto-output-text.constants";
 
 class Home extends Component {
   constructor() {
@@ -44,15 +45,18 @@ class Home extends Component {
       cursorPosition: 0,
       stringBeforeCursor: "",
       stringAfterCursor: "",
+      isInProjects: false,
     };
-    this.keyPressAudio = new Audio("../../assets/sound/keys.mp3");
-    // this.autoOutputText(SALUTATIONS_3D_ASCII_ART, DELAY_BETWEEN_CHARACTERS);
+    this.keyPressAudio = new Audio(keyPressSound);
+    this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
   }
 
   autoOutputText(strings, delayBetweenCharacters) {
     const delayBetweenLines = delayBetweenCharacters * 2;
     strings.forEach((string, i) => {
       const stringArray = string.split("");
+      const stringLength = strings[i - 1] ? strings[i - 1].split("").length : stringArray.length;
+
       setTimeout(() => {
         stringArray.forEach((char, j) => {
           setTimeout(
@@ -67,9 +71,9 @@ class Home extends Component {
 
         setTimeout(
           () => this.goToNextLine(string),
-          delayBetweenCharacters * stringArray.length
+          delayBetweenCharacters * stringLength
         );
-      }, delayBetweenCharacters * stringArray.length * i + delayBetweenLines);
+      }, delayBetweenCharacters * stringLength * i + delayBetweenLines);
     });
   }
 
@@ -154,7 +158,9 @@ class Home extends Component {
       newInput.preventDefault();
       const autocompleteText = this.autocomplete(
         this.state.currentTextLine,
-        Object.values(ALL_COMMANDS).map((command) => command.toUpperCase())
+        Object.values(ALL_COMMANDS).map((command) =>
+          command.string.toUpperCase()
+        )
       );
 
       if (autocompleteText) {
@@ -264,6 +270,8 @@ class Home extends Component {
       upperCaseCommand === ALL_COMMANDS.PROJECTS.string.toUpperCase()
     ) {
       previousLines = [];
+      this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
+
       // clear screen and display projects
     } else if (upperCaseCommand === ALL_COMMANDS.ABOUT.string.toUpperCase()) {
       previousLines = [];
@@ -314,20 +322,18 @@ class Home extends Component {
     }
   }
 
-  displayCommands() {}
-
   render() {
     let { stringBeforeCursor, stringAfterCursor } = this.state;
 
     const renderStringBeforeCursor = () => {
-      if (stringBeforeCursor.length) {
-        return this.state.stringBeforeCursor;
+      if (stringBeforeCursor) {
+        return stringBeforeCursor;
       }
     };
 
     const renderStringAfterCursor = () => {
-      if (stringAfterCursor.length) {
-        return this.state.stringAfterCursor;
+      if (stringAfterCursor) {
+        return stringAfterCursor;
       }
     };
 
@@ -336,18 +342,28 @@ class Home extends Component {
         <pre className="TerminalLines">
           {this.state.previousTextLines.map((line) => (
             <div>
-              <span className="Terminal-Text">{line}</span>
+              <span className="TerminalText">{line}</span>
             </div>
           ))}
+
+          {this.state.isInProjects && (
+            <div>
+              <span>
+                <img
+                  className="ProjectScreenCap"
+                  src={testGif}
+                  alt="loading..."
+                />
+              </span>
+            </div>
+          )}
+
           <div>
-            <span className="Terminal-Text">{LINE_START}</span>
-            <span className="Terminal-Text">{renderStringBeforeCursor()}</span>
+            <span className="TerminalText">{LINE_START}</span>
+            <span className="TerminalText">{renderStringBeforeCursor()}</span>
             <span className="Cursor">█</span>
-            <span className="Terminal-Text">{renderStringAfterCursor()}</span>
+            <span className="TerminalText">{renderStringAfterCursor()}</span>
           </div>
-          <span>
-            <img src={testGif} alt="loading..." />
-          </span>
         </pre>
       </main>
     );
