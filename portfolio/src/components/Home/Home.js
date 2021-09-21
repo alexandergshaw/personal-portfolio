@@ -15,8 +15,8 @@ import {
   DIVIDER,
   LINE_START,
   DELAY_BETWEEN_CHARACTERS,
-  DELAY_BETWEEN_LINES,
   KEY_PRESS_AUDIO_FILES,
+  DATA_STREAMING_AUDIO_FILES,
 } from "../../common/constants/bells-and-whistles.constants";
 import {
   WELCOME_ASCII_ART,
@@ -25,12 +25,12 @@ import {
   TERMINAL_NAME_3D_ASCII_ART,
 } from "../../common/constants/ascii-art.constants";
 import "./Home.css";
-import dataStreamSound from "../../assets/sounds/data-streaming/data-streaming.wav";
 import testGif from "../../assets/gifs/Animation.gif";
 import {
   PROJECTS_DISPLAY_STRINGS,
   LOADING_STRINGS,
 } from "../../common/constants/auto-output-text.constants";
+import { PROJECTS } from "../../common/constants/projects.constants";
 
 class Home extends Component {
   constructor() {
@@ -53,11 +53,11 @@ class Home extends Component {
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCommand = this.handleCommand.bind(this);
     this.goToNextLine = this.goToNextLine.bind(this);
-    this.playKeyPressSound = this.playKeyPressSound.bind(this);
+    this.playRandomSound = this.playRandomSound.bind(this);
     this.playSound = this.playSound.bind(this);
     this.autoOutputCharacter = this.autoOutputCharacter.bind(this);
 
-    this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
+    // this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
   }
 
   autoOutputText(strings, delayBetweenCharacters) {
@@ -69,19 +69,17 @@ class Home extends Component {
         : stringArray.length;
 
       setTimeout(() => {
-        this.playSound(dataStreamSound);
         stringArray.forEach((char, j) => {
-          setTimeout(
-            () => this.autoOutputCharacter(char),
-            delayBetweenCharacters * j
-          );
+          setTimeout(() => {
+            this.playRandomSound(DATA_STREAMING_AUDIO_FILES);
+            this.autoOutputCharacter(char);
+          }, delayBetweenCharacters * j);
         });
 
         setTimeout(
           () => this.goToNextLine(string),
           delayBetweenCharacters * stringLength
         );
-
       }, delayBetweenCharacters * stringLength * i + delayBetweenLines);
     });
   }
@@ -111,7 +109,7 @@ class Home extends Component {
   }
 
   handleKeyPress(newInput) {
-    this.playKeyPressSound();
+    this.playRandomSound(KEY_PRESS_AUDIO_FILES);
 
     if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
@@ -256,12 +254,8 @@ class Home extends Component {
     //
   }
 
-  playKeyPressSound() {
-    this.playSound(
-      KEY_PRESS_AUDIO_FILES[
-        Math.floor(Math.random() * KEY_PRESS_AUDIO_FILES.length)
-      ]
-    );
+  playRandomSound(audioFiles) {
+    this.playSound(audioFiles[Math.floor(Math.random() * audioFiles.length)]);
   }
 
   playSound(audioFile) {
@@ -295,6 +289,11 @@ class Home extends Component {
     ) {
       previousLines = [];
       this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
+
+      Object.values(PROJECTS).map(project => {
+        previousLines.push("Project\t\t\t\tDescription");
+        previousLines.push(project.displayName + "\t\t[description]");
+      });
 
       // clear screen and display projects
     } else if (upperCaseCommand === ALL_COMMANDS.ABOUT.string.toUpperCase()) {
@@ -361,6 +360,12 @@ class Home extends Component {
       }
     };
 
+    const previousCommands = this.state.previousCommands;
+    const inputProjectsCommand =
+      this.state.previousCommands[previousCommands.length - 1] &&
+      this.state.previousCommands[previousCommands.length - 1].toLowerCase().replace(/\s/g, '') ===
+        ALL_COMMANDS.PROJECTS.string.toLowerCase();
+
     return (
       <main className="Terminal" onKeyDown={this.handleKeyPress} tabIndex={-1}>
         <pre className="TerminalLines">
@@ -369,19 +374,21 @@ class Home extends Component {
               <span className="TerminalText">{line}</span>
             </div>
           ))}
-
-          {this.state.isInProjects && (
-            <div>
-              <span>
-                <img
-                  className="ProjectScreenCap"
-                  src={testGif}
-                  alt="loading..."
-                />
-              </span>
-            </div>
-          )}
-
+          {/* {inputProjectsCommand &&
+            Object.values(PROJECTS).map((project) => {
+              console.log('project', project);
+              console.log('project.displayName', project.displayName);
+              <div>
+                <span>{project.displayName}</span>
+                <span>
+                  <img
+                    className="ProjectScreenCap"
+                    src={project.gifPath}
+                    alt="loading..."
+                  />
+                </span>
+              </div>
+            })} */}
           <div>
             <span className="TerminalText">{LINE_START}</span>
             <span className="TerminalText">{renderStringBeforeCursor()}</span>
