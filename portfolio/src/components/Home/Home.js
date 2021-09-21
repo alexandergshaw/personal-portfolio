@@ -16,6 +16,7 @@ import {
   LINE_START,
   DELAY_BETWEEN_CHARACTERS,
   DELAY_BETWEEN_LINES,
+  KEY_PRESS_SOUNDS
 } from "../../common/constants/bells-and-whistles.constants";
 import {
   WELCOME_ASCII_ART,
@@ -36,6 +37,7 @@ class Home extends Component {
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCommand = this.handleCommand.bind(this);
     this.goToNextLine = this.goToNextLine.bind(this);
+    this.playKeyPressSound = this.playKeyPressSound.bind(this);
 
     this.state = {
       currentTextLine: "",
@@ -47,8 +49,8 @@ class Home extends Component {
       stringAfterCursor: "",
       isInProjects: false,
     };
-    this.keyPressAudio = new Audio(keyPressSound);
-    this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
+    // this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
+    this.keyPressAudio = new Audio();
   }
 
   autoOutputText(strings, delayBetweenCharacters) {
@@ -91,21 +93,8 @@ class Home extends Component {
   }
 
   handleKeyPress(newInput) {
-    const playPromise = this.keyPressAudio.play();
+    this.playKeyPressSound();
 
-    if (playPromise !== undefined) {
-      playPromise
-        .then((_) => {
-          // Automatic playback started!
-          // Show playing UI.
-          console.log("audio played auto");
-        })
-        .catch((error) => {
-          // Auto-play was prevented
-          // Show paused UI.
-          console.log("playback prevented: ", error);
-        });
-    }
     // let audio = new Audio('../../assets/sound/keys.mp3');
     // audio.play();
 
@@ -250,6 +239,30 @@ class Home extends Component {
     }
 
     //
+  }
+
+  playKeyPressSound() {
+    this.keyPressAudio.pause();
+    const soundFilePath = KEY_PRESS_SOUNDS[Math.floor(Math.random() * (KEY_PRESS_SOUNDS.length - 1))];
+
+    console.log('soundFilePath', soundFilePath);
+
+    this.keyPressAudio = new Audio(soundFilePath);
+    const playPromise = this.keyPressAudio.play();
+
+    if (playPromise !== undefined) {
+      playPromise
+        .then((_) => {
+          // Automatic playback started!
+          // Show playing UI.
+          console.log("audio played auto");
+        })
+        .catch((error) => {
+          // Auto-play was prevented
+          // Show paused UI.
+          console.log("playback prevented: ", error);
+        });
+    }
   }
 
   handleCommand(command) {
