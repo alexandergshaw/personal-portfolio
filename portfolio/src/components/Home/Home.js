@@ -16,7 +16,7 @@ import {
   LINE_START,
   DELAY_BETWEEN_CHARACTERS,
   DELAY_BETWEEN_LINES,
-  KEY_PRESS_SOUNDS
+  KEY_PRESS_AUDIO_FILES,
 } from "../../common/constants/bells-and-whistles.constants";
 import {
   WELCOME_ASCII_ART,
@@ -25,19 +25,16 @@ import {
   TERMINAL_NAME_3D_ASCII_ART,
 } from "../../common/constants/ascii-art.constants";
 import "./Home.css";
-import useSound from "use-sound";
-import keyPressSound from "../../assets/sounds/key-press-1.mp3";
+import dataStreamSound from "../../assets/sounds/data-streaming/data-streaming.wav";
 import testGif from "../../assets/gifs/Animation.gif";
-import { PROJECTS_DISPLAY_STRINGS, LOADING_STRINGS } from "../../common/constants/auto-output-text.constants";
+import {
+  PROJECTS_DISPLAY_STRINGS,
+  LOADING_STRINGS,
+} from "../../common/constants/auto-output-text.constants";
 
 class Home extends Component {
   constructor() {
     super();
-    this.autoOutputText = this.autoOutputText.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.handleCommand = this.handleCommand.bind(this);
-    this.goToNextLine = this.goToNextLine.bind(this);
-    this.playKeyPressSound = this.playKeyPressSound.bind(this);
 
     this.state = {
       currentTextLine: "",
@@ -49,24 +46,33 @@ class Home extends Component {
       stringAfterCursor: "",
       isInProjects: false,
     };
-    // this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
-    this.keyPressAudio = new Audio();
+
+    this.audioPlayer = new Audio();
+
+    this.autoOutputText = this.autoOutputText.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleCommand = this.handleCommand.bind(this);
+    this.goToNextLine = this.goToNextLine.bind(this);
+    this.playKeyPressSound = this.playKeyPressSound.bind(this);
+    this.playSound = this.playSound.bind(this);
+    this.autoOutputCharacter = this.autoOutputCharacter.bind(this);
+
+    this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
   }
 
   autoOutputText(strings, delayBetweenCharacters) {
     const delayBetweenLines = delayBetweenCharacters * 2;
     strings.forEach((string, i) => {
       const stringArray = string.split("");
-      const stringLength = strings[i - 1] ? strings[i - 1].split("").length : stringArray.length;
+      const stringLength = strings[i - 1]
+        ? strings[i - 1].split("").length
+        : stringArray.length;
 
       setTimeout(() => {
+        this.playSound(dataStreamSound);
         stringArray.forEach((char, j) => {
           setTimeout(
-            () =>
-              this.handleKeyPress({
-                key: char,
-                keyCode: "",
-              }),
+            () => this.autoOutputCharacter(char),
             delayBetweenCharacters * j
           );
         });
@@ -75,7 +81,19 @@ class Home extends Component {
           () => this.goToNextLine(string),
           delayBetweenCharacters * stringLength
         );
+
       }, delayBetweenCharacters * stringLength * i + delayBetweenLines);
+    });
+  }
+
+  autoOutputCharacter(char) {
+    const newStringOnScreen = this.state.currentTextLine + char;
+    const newCursorPosition = this.state.cursorPosition + 1;
+
+    this.setState({
+      currentTextLine: newStringOnScreen,
+      stringBeforeCursor: newStringOnScreen.slice(0, newCursorPosition),
+      cursorPosition: newCursorPosition,
     });
   }
 
@@ -94,9 +112,6 @@ class Home extends Component {
 
   handleKeyPress(newInput) {
     this.playKeyPressSound();
-
-    // let audio = new Audio('../../assets/sound/keys.mp3');
-    // audio.play();
 
     if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
@@ -242,26 +257,22 @@ class Home extends Component {
   }
 
   playKeyPressSound() {
-    this.keyPressAudio.pause();
-    const soundFilePath = KEY_PRESS_SOUNDS[Math.floor(Math.random() * (KEY_PRESS_SOUNDS.length - 1))];
+    this.playSound(
+      KEY_PRESS_AUDIO_FILES[
+        Math.floor(Math.random() * KEY_PRESS_AUDIO_FILES.length)
+      ]
+    );
+  }
 
-    console.log('soundFilePath', soundFilePath);
-
-    this.keyPressAudio = new Audio(soundFilePath);
-    const playPromise = this.keyPressAudio.play();
+  playSound(audioFile) {
+    this.audioPlayer.pause();
+    this.audioPlayer = new Audio(audioFile);
+    const playPromise = this.audioPlayer.play();
 
     if (playPromise !== undefined) {
-      playPromise
-        .then((_) => {
-          // Automatic playback started!
-          // Show playing UI.
-          console.log("audio played auto");
-        })
-        .catch((error) => {
-          // Auto-play was prevented
-          // Show paused UI.
-          console.log("playback prevented: ", error);
-        });
+      playPromise.catch((error) => {
+        console.log("playback prevented: ", error);
+      });
     }
   }
 
