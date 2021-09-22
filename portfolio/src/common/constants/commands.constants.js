@@ -21,5 +21,10 @@ export const ALL_COMMANDS = {
     CLEAR: {
         string: "clear",
         description: "clear everything on screen"
+    },
+
+    SEARCH: {
+        string: "search",
+        description: "search for specified text"
     }
 };

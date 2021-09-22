@@ -44,7 +44,8 @@ class Home extends Component {
       cursorPosition: 0,
       stringBeforeCursor: "",
       stringAfterCursor: "",
-      isInProjects: false,
+      directory: "",
+      currentLineMediaSource: ""
     };
 
     this.audioPlayer = new Audio();
@@ -78,9 +79,9 @@ class Home extends Component {
 
         setTimeout(
           () => this.goToNextLine(string),
-          delayBetweenCharacters * stringLength
+          delayBetweenCharacters * stringArray.length
         );
-      }, delayBetweenCharacters * stringLength * i + delayBetweenLines);
+      }, (delayBetweenCharacters * stringLength * i) + delayBetweenLines);
     });
   }
 
@@ -166,9 +167,10 @@ class Home extends Component {
       );
 
       if (autocompleteText) {
+        const formattedText = autocompleteText.toLowerCase().trim();
         this.setState({
-          currentTextLine: autocompleteText.toLowerCase(),
-          stringBeforeCursor: autocompleteText.toLowerCase(),
+          currentTextLine: formattedText,
+          stringBeforeCursor: formattedText,
           cursorPosition: autocompleteText.length,
         });
       }
@@ -179,7 +181,9 @@ class Home extends Component {
       ]
         ? this.state.commandIndex - 1
         : this.state.commandIndex;
-      const command = this.state.previousCommands[newCommandIndex];
+      const command = this.state.previousCommands[newCommandIndex]
+        ? this.state.previousCommands[newCommandIndex].trim()
+        : "";
 
       this.setState({
         currentTextLine: command,
@@ -196,7 +200,7 @@ class Home extends Component {
           ? this.state.commandIndex + 1
           : this.state.commandIndex;
       const command = this.state.previousCommands[newCommandIndex]
-        ? this.state.previousCommands[newCommandIndex]
+        ? this.state.previousCommands[newCommandIndex].trim()
         : "";
 
       this.setState({
@@ -287,15 +291,20 @@ class Home extends Component {
     } else if (
       upperCaseCommand === ALL_COMMANDS.PROJECTS.string.toUpperCase()
     ) {
+      // this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
       previousLines = [];
-      this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
+      let projectsText = [];
 
-      Object.values(PROJECTS).map(project => {
-        previousLines.push("Project\t\t\t\tDescription");
-        previousLines.push(project.displayName + "\t\t[description]");
+      projectsText.push("Project\t\t\t\tDescription");
+      Object.values(PROJECTS).map((project) => {
+        projectsText.push(project.displayName + "\t\t[description]");
+        
+        this.setState({
+          currentLineMediaSource: project.gifPath
+        });
       });
 
-      // clear screen and display projects
+      this.autoOutputText(projectsText, DELAY_BETWEEN_CHARACTERS);
     } else if (upperCaseCommand === ALL_COMMANDS.ABOUT.string.toUpperCase()) {
       previousLines = [];
       // clear screen and display things a recruiter needs to see
@@ -309,12 +318,20 @@ class Home extends Component {
           command.string.toUpperCase()
         )
       );
-      previousLines.push(DIVIDER);
-      previousLines.push(
+      let textToOutput = [
         "Unrecognized command. Did you mean " +
           mostLikelyCommand.toLowerCase() +
-          "?"
-      );
+          "?",
+      ];
+
+      this.autoOutputText(textToOutput, DELAY_BETWEEN_CHARACTERS);
+
+      // previousLines.push(DIVIDER);
+      // previousLines.push(
+      //   "Unrecognized command. Did you mean " +
+      //     mostLikelyCommand.toLowerCase() +
+      //     "?"
+      // );
     }
 
     return previousLines;
@@ -360,12 +377,6 @@ class Home extends Component {
       }
     };
 
-    const previousCommands = this.state.previousCommands;
-    const inputProjectsCommand =
-      this.state.previousCommands[previousCommands.length - 1] &&
-      this.state.previousCommands[previousCommands.length - 1].toLowerCase().replace(/\s/g, '') ===
-        ALL_COMMANDS.PROJECTS.string.toLowerCase();
-
     return (
       <main className="Terminal" onKeyDown={this.handleKeyPress} tabIndex={-1}>
         <pre className="TerminalLines">
@@ -374,21 +385,6 @@ class Home extends Component {
               <span className="TerminalText">{line}</span>
             </div>
           ))}
-          {/* {inputProjectsCommand &&
-            Object.values(PROJECTS).map((project) => {
-              console.log('project', project);
-              console.log('project.displayName', project.displayName);
-              <div>
-                <span>{project.displayName}</span>
-                <span>
-                  <img
-                    className="ProjectScreenCap"
-                    src={project.gifPath}
-                    alt="loading..."
-                  />
-                </span>
-              </div>
-            })} */}
           <div>
             <span className="TerminalText">{LINE_START}</span>
             <span className="TerminalText">{renderStringBeforeCursor()}</span>
