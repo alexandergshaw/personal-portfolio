@@ -45,7 +45,7 @@ class Home extends Component {
       stringBeforeCursor: "",
       stringAfterCursor: "",
       directory: "",
-      currentLineMediaSource: ""
+      currentLineMediaSource: "",
     };
 
     this.audioPlayer = new Audio();
@@ -81,7 +81,7 @@ class Home extends Component {
           () => this.goToNextLine(string),
           delayBetweenCharacters * stringArray.length
         );
-      }, (delayBetweenCharacters * stringLength * i) + delayBetweenLines);
+      }, delayBetweenCharacters * stringLength * i + delayBetweenLines);
     });
   }
 
@@ -279,15 +279,14 @@ class Home extends Component {
     let previousLines = this.state.previousTextLines;
 
     if (upperCaseCommand === ALL_COMMANDS.HELP.string.toUpperCase()) {
-      previousLines.push(DIVIDER);
-      previousLines.push(" ");
-      previousLines.push("All available commands");
+      let helpLines = [DIVIDER, " ", "All available commands"];
 
       Object.values(ALL_COMMANDS).map((command) => {
-        previousLines.push(command.string + "\t\t" + command.description);
+        helpLines.push(command.string + "\t\t" + command.description);
       });
 
-      previousLines.push(" ");
+      helpLines.push(" ");
+      this.autoOutputText(helpLines, DELAY_BETWEEN_CHARACTERS);
     } else if (
       upperCaseCommand === ALL_COMMANDS.PROJECTS.string.toUpperCase()
     ) {
@@ -298,9 +297,9 @@ class Home extends Component {
       projectsText.push("Project\t\t\t\tDescription");
       Object.values(PROJECTS).map((project) => {
         projectsText.push(project.displayName + "\t\t[description]");
-        
+
         this.setState({
-          currentLineMediaSource: project.gifPath
+          currentLineMediaSource: project.gifPath,
         });
       });
 
