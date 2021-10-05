@@ -31,6 +31,7 @@ import {
   LOADING_STRINGS,
 } from "../../common/constants/auto-output-text.constants";
 import { PROJECTS } from "../../common/constants/projects.constants";
+import { DISPLAY_INFO } from "../../common/constants/about.constants";
 
 class Home extends Component {
   constructor() {
@@ -306,6 +307,7 @@ class Home extends Component {
       this.autoOutputText(projectsText, DELAY_BETWEEN_CHARACTERS);
     } else if (upperCaseCommand === ALL_COMMANDS.ABOUT.string.toUpperCase()) {
       previousLines = [];
+      this.autoOutputText(DISPLAY_INFO, DELAY_BETWEEN_CHARACTERS);
       // clear screen and display things a recruiter needs to see
       // include ascii art of myself?
     } else if (upperCaseCommand === ALL_COMMANDS.CLEAR.string.toUpperCase()) {
@@ -318,9 +320,9 @@ class Home extends Component {
         )
       );
       let textToOutput = [
-        "Unrecognized command. Did you mean " +
+        "Unrecognized command. Did you mean \"" +
           mostLikelyCommand.toLowerCase() +
-          "?",
+          "\"?",
       ];
 
       this.autoOutputText(textToOutput, DELAY_BETWEEN_CHARACTERS);
