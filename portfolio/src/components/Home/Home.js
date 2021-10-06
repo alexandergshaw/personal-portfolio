@@ -62,27 +62,30 @@ class Home extends Component {
     // this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
   }
 
-  autoOutputText(strings, delayBetweenCharacters) {
+  autoOutputText(textLines, delayBetweenCharacters) {
+    let runningTotalTime = 0;
     const delayBetweenLines = delayBetweenCharacters * 2;
-    strings.forEach((string, i) => {
-      const stringArray = string.split("");
-      const stringLength = strings[i - 1]
-        ? strings[i - 1].split("").length
-        : stringArray.length;
+    textLines.forEach((string, i) => {
+      const currentLine = string.split("");
+      const lengthOfPreviousLine = textLines[i - 1]
+        ? textLines[i - 1].split("").length
+        : 0;
 
       setTimeout(() => {
-        stringArray.forEach((char, j) => {
+        // output each character
+        currentLine.forEach((char, j) => {
+          runningTotalTime += delayBetweenCharacters;
           setTimeout(() => {
             this.playRandomSound(DATA_STREAMING_AUDIO_FILES);
             this.autoOutputCharacter(char);
-          }, delayBetweenCharacters * j);
+          }, runningTotalTime);
         });
 
-        setTimeout(
-          () => this.goToNextLine(string),
-          delayBetweenCharacters * stringArray.length
-        );
-      }, delayBetweenCharacters * stringLength * i + delayBetweenLines);
+        // output the line above the typing line after each character is done being typed
+        setTimeout(() => this.goToNextLine(string), runningTotalTime);
+
+        runningTotalTime += delayBetweenLines;
+      }, runningTotalTime);
     });
   }
 
@@ -320,9 +323,9 @@ class Home extends Component {
         )
       );
       let textToOutput = [
-        "Unrecognized command. Did you mean \"" +
+        'Unrecognized command. Did you mean "' +
           mostLikelyCommand.toLowerCase() +
-          "\"?",
+          '"?',
       ];
 
       this.autoOutputText(textToOutput, DELAY_BETWEEN_CHARACTERS);
