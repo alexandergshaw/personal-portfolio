@@ -14,7 +14,7 @@ import { ALL_COMMANDS } from "../../common/constants/commands.constants";
 import {
   DIVIDER,
   LINE_START,
-  DELAY_BETWEEN_CHARACTERS,
+  MAX_DELAY_BETWEEN_CHARACTERS,
   KEY_PRESS_AUDIO_FILES,
   DATA_STREAMING_AUDIO_FILES,
 } from "../../common/constants/bells-and-whistles.constants";
@@ -30,8 +30,11 @@ import {
   PROJECTS_DISPLAY_STRINGS,
   LOADING_STRINGS,
 } from "../../common/constants/auto-output-text.constants";
-import { PROJECTS } from "../../common/constants/projects.constants";
-import { DISPLAY_INFO } from "../../common/constants/about.constants";
+import {
+  ABOUT_INFO,
+  PROJECTS_INFO,
+  SKILLS_INFO,
+} from "../../common/constants/display-sections.constants";
 
 class Home extends Component {
   constructor() {
@@ -47,6 +50,9 @@ class Home extends Component {
       stringAfterCursor: "",
       directory: "",
       currentLineMediaSource: "",
+      linesToOutput: [],
+      currentlyOutputtingLines: false,
+      continueOutputtingLines: true,
     };
 
     this.audioPlayer = new Audio();
@@ -58,34 +64,119 @@ class Home extends Component {
     this.playRandomSound = this.playRandomSound.bind(this);
     this.playSound = this.playSound.bind(this);
     this.autoOutputCharacter = this.autoOutputCharacter.bind(this);
+    this.getRandomWaitTime = this.getRandomWaitTime.bind(this);
+    this.welcome = this.welcome.bind(this);
 
-    // this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
+    this.welcome();
+    // this.autoOutputText(LOADING_STRINGS, MAX_DELAY_BETWEEN_CHARACTERS);
   }
 
-  autoOutputText(textLines, delayBetweenCharacters) {
+  welcome() {
+    const NUM_LOADING_MESSAGES = 5;
+    const MIN_NUMBER_OF_DOTTED_LINES = 1;
+    const MAX_NUMBER_OF_DOTTED_LINES = 4;
+    const MIN_NUMBER_OF_DOTS_IN_LINE = 3;
+    const MAX_NUMBER_OF_DOTS_IN_LINE = 10;
+    let loadingMessagesToDisplay = ["Loading, please wait"];
+
+    for (let i = 0; i < NUM_LOADING_MESSAGES; i++) {
+      const index = Math.floor(Math.random() * LOADING_STRINGS.length);
+      console.log("index", index);
+
+      // loadingMessagesToDisplay.push('LOADING');
+
+      for (
+        let j = 0;
+        j <
+        MIN_NUMBER_OF_DOTTED_LINES +
+          Math.floor(Math.random() * MAX_NUMBER_OF_DOTTED_LINES);
+        j++
+      ) {
+        let dotString = "";
+        for (
+          let k = 0;
+          k <
+          MIN_NUMBER_OF_DOTS_IN_LINE +
+            Math.floor(Math.random() * MAX_NUMBER_OF_DOTS_IN_LINE);
+          k++
+        ) {
+          dotString += ".";
+        }
+        loadingMessagesToDisplay.push(dotString);
+      }
+    }
+
+    loadingMessagesToDisplay.push("Loading complete");
+    loadingMessagesToDisplay.push("Welcome!");
+    loadingMessagesToDisplay.push(" ");
+    // this.autoOutputText(loadingMessagesToDisplay.concat(this.handleCommand(ALL_COMMANDS.HELP.string)));
+  }
+
+  autoOutputText(textLines) {
+    this.setState({
+      linesToOutput: textLines,
+      currentlyOutputtingLines: true,
+      continueOutputtingLines: true,
+    });
+
     let runningTotalTime = 0;
-    const delayBetweenLines = delayBetweenCharacters * 2;
+    const delayBetweenLines = MAX_DELAY_BETWEEN_CHARACTERS * 3;
     textLines.forEach((string, i) => {
-      const currentLine = string.split("");
-      const lengthOfPreviousLine = textLines[i - 1]
-        ? textLines[i - 1].split("").length
-        : 0;
+      if (this.state.continueOutputtingLines) {
+        const currentLine = string.split("");
+        const lengthOfPreviousLine = textLines[i - 1]
+          ? textLines[i - 1].split("").length
+          : 0;
 
-      setTimeout(() => {
-        // output each character
-        currentLine.forEach((char, j) => {
-          runningTotalTime += delayBetweenCharacters;
-          setTimeout(() => {
-            this.playRandomSound(DATA_STREAMING_AUDIO_FILES);
-            this.autoOutputCharacter(char);
-          }, runningTotalTime);
+        const currentLineTimeout = setTimeout(() => {
+          // output each character
+          currentLine.forEach((char, j) => {
+            if (this.state.continueOutputtingLines) {
+              runningTotalTime += this.getRandomWaitTime(
+                MAX_DELAY_BETWEEN_CHARACTERS
+              );
+              const currentCharTimeout = setTimeout(() => {
+                this.playRandomSound(DATA_STREAMING_AUDIO_FILES);
+                this.autoOutputCharacter(char);
+              }, runningTotalTime);
+
+              console.log(
+                "in autoOutputText, this.state.continueOutputtingLines:",
+                this.state.continueOutputtingLines
+              );
+              console.log(
+                "in autoOutputText, this.state.currentlyOutputtingLines:",
+                this.state.currentlyOutputtingLines
+              );
+              if (!this.state.continueOutputtingLines) {
+                clearTimeout(currentCharTimeout);
+              }
+            }
+          });
+
+          // output the line above the typing line after each character is done being typed
+          const previousLineTimeout = setTimeout(
+            () => this.goToNextLine(string),
+            runningTotalTime
+          );
+
+          if (!this.state.continueOutputtingLines) {
+            clearTimeout(previousLineTimeout);
+          }
+
+          this.setState({ previousLineTimeout: previousLineTimeout });
+
+          runningTotalTime += this.getRandomWaitTime(delayBetweenLines);
+        }, runningTotalTime);
+
+        if (!this.state.continueOutputtingLines) {
+          clearTimeout(currentLineTimeout);
+        }
+
+        this.setState({
+          currentLineTimeout: currentLineTimeout,
         });
-
-        // output the line above the typing line after each character is done being typed
-        setTimeout(() => this.goToNextLine(string), runningTotalTime);
-
-        runningTotalTime += delayBetweenLines;
-      }, runningTotalTime);
+      }
     });
   }
 
@@ -113,10 +204,37 @@ class Home extends Component {
     });
   }
 
+  getRandomWaitTime(maxTime) {
+    return Math.floor(Math.random() * maxTime);
+  }
+
   handleKeyPress(newInput) {
     this.playRandomSound(KEY_PRESS_AUDIO_FILES);
 
-    if (newInput.key.length === 1 && newInput.keyCode !== SPACE_KEY_CODE) {
+    console.log(
+      "this.state.continueOutputtingLines",
+      this.state.continueOutputtingLines
+    );
+
+    console.log(
+      "this.state.currentlyOutputtingLines",
+      this.state.currentlyOutputtingLines
+    );
+
+    if (
+      this.state.continueOutputtingLines &&
+      this.state.currentlyOutputtingLines
+    ) {
+      clearTimeout(this.state.previousLineTimeout);
+      clearTimeout(this.state.currentLineTimeout);
+      clearTimeout(this.state.currentCharTimeout);
+      this.setState({
+        continueOutputtingLines: false,
+      });
+    } else if (
+      newInput.key.length === 1 &&
+      newInput.keyCode !== SPACE_KEY_CODE
+    ) {
       const newStringOnScreen = this.state.currentTextLine + newInput.key;
       const newCursorPosition = this.state.cursorPosition + 1;
 
@@ -151,6 +269,8 @@ class Home extends Component {
 
       let previousCommands = this.state.previousCommands;
       previousCommands.push(priorLine);
+
+      console.log("in enter keypress handler");
 
       this.setState({
         currentTextLine: "",
@@ -278,43 +398,42 @@ class Home extends Component {
     }
   }
 
+  // todo: make sure key commands have their Mac/mobile equivalents
+  // todo: make text wrap on smaller screens
   handleCommand(command) {
+    console.log("in handle commands");
     const upperCaseCommand = command.toUpperCase();
     let previousLines = this.state.previousTextLines;
 
     if (upperCaseCommand === ALL_COMMANDS.HELP.string.toUpperCase()) {
-      let helpLines = [DIVIDER, " ", "All available commands"];
+      let helpLines = [" ", "ALL AVAILABLE COMMANDS: "];
 
       Object.values(ALL_COMMANDS).map((command) => {
-        helpLines.push(command.string + "\t\t" + command.description);
+        helpLines.push(
+          '\t"' + command.string + '"' + ": " + command.description
+        );
       });
 
       helpLines.push(" ");
-      this.autoOutputText(helpLines, DELAY_BETWEEN_CHARACTERS);
+      helpLines.push("OTHER USEFUL INFORMATION: ");
+      helpLines.push(
+        "\t↳ Up/down arrow keys navigate through previous commands"
+      );
+      helpLines.push("\t↳ Tab key autocompletes commands");
+      helpLines.push(" ");
+
+      this.autoOutputText(helpLines);
     } else if (
       upperCaseCommand === ALL_COMMANDS.PROJECTS.string.toUpperCase()
     ) {
-      // this.autoOutputText(LOADING_STRINGS, DELAY_BETWEEN_CHARACTERS);
-      previousLines = [];
-      let projectsText = [];
-
-      projectsText.push("Project\t\t\t\tDescription");
-      Object.values(PROJECTS).map((project) => {
-        projectsText.push(project.displayName + "\t\t[description]");
-
-        this.setState({
-          currentLineMediaSource: project.gifPath,
-        });
-      });
-
-      this.autoOutputText(projectsText, DELAY_BETWEEN_CHARACTERS);
+      this.autoOutputText(PROJECTS_INFO);
     } else if (upperCaseCommand === ALL_COMMANDS.ABOUT.string.toUpperCase()) {
-      previousLines = [];
-      this.autoOutputText(DISPLAY_INFO, DELAY_BETWEEN_CHARACTERS);
-      // clear screen and display things a recruiter needs to see
-      // include ascii art of myself?
+      this.autoOutputText(ABOUT_INFO);
+      // todo: include ascii art of myself?
     } else if (upperCaseCommand === ALL_COMMANDS.CLEAR.string.toUpperCase()) {
       previousLines = [];
+    } else if (upperCaseCommand === ALL_COMMANDS.SKILLS.string.toUpperCase()) {
+      this.autoOutputText(SKILLS_INFO);
     } else {
       let mostLikelyCommand = this.determineMostLikely(
         command,
@@ -328,7 +447,7 @@ class Home extends Component {
           '"?',
       ];
 
-      this.autoOutputText(textToOutput, DELAY_BETWEEN_CHARACTERS);
+      this.autoOutputText(textToOutput);
 
       // previousLines.push(DIVIDER);
       // previousLines.push(

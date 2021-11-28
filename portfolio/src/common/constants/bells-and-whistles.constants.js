@@ -12,7 +12,7 @@ import dataStreamSound1 from "../../assets/sounds/data-streaming/data-streaming-
 
 export const DIVIDER = "-------------------------------------------------------------------";
 export const LINE_START = "> ";
-export const DELAY_BETWEEN_CHARACTERS = 33.75;
+export const MAX_DELAY_BETWEEN_CHARACTERS = 70;
 export const KEY_PRESS_AUDIO_FILES = [
     keyPressSound1,
     keyPressSound2,

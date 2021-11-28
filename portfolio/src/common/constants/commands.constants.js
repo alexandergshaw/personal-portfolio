@@ -3,19 +3,25 @@ export const ALL_COMMANDS = {
         string: "help",
         description: "display all available commands"
     },
+
     PROJECTS: {
         string: "projects",
-        description: "display all projects"
+        description: "display information about projects the developer has completed"
     },
 
     ABOUT: {
         string: "about",
         description: "display information about the developer"
     }, 
-    
-    LIST_DIRECTORIES: {
-        string: "ls",
-        description: "display all available directories"
+
+    SKILLS: {
+        string: "skills",
+        description: "display list of developer's skills in various frameworks and languages"
+    },
+
+    EVERYTHING: {
+        string: "kitchen-sink",
+        description: "display everything related to the developer"
     },
 
     CLEAR: {

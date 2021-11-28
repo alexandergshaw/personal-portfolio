@@ -1,18 +1,6 @@
-export const INFO_ABOUT_ME = {
-  EDUCATION: {
-    school: "Missouri University of Science and Technology",
-    major: "Computer Science",
-    degree: "BS",
-  },
-  CAREER: {
-    track: "Web Application Developer",
-    currentCompany: "Union Pacific Railroad"
-  },
-  INTERESTS: [],
-};
-
 // todo: need to make output for large blocks simultaneous
-export const DISPLAY_INFO = [
+// todo: figure out a way to include pictures
+export const ABOUT_INFO = [
   '=============================== ABOUT THE DEVELOPER =============================',
   '  NAME: Alex Shaw',
   '  OCCUPATION: Front End Developer',
@@ -35,3 +23,28 @@ export const DISPLAY_INFO = [
   '  ↳ FAVORITE COLOR: Blue Food Coloring #52',
   '=================================================================================',
 ];
+
+export const PROJECTS_INFO = [
+  '=========================== DEVELOPER\'S PROJECT HISTORY =========================',
+  '  CAREER-RELATED PROJECTS:',
+  '  ↳ COMPANY: Union Pacific Railroad',
+  '  ↳ NAME: Shipment Management Dashboard',
+  '  ↳ FRAMEWORK: Angular',
+  '  ↳ OTHER NOTES: Angular',
+  ' '
+];
+
+export const SKILLS_INFO = [
+  '============================= DEVELOPER\'S SKILL AREAS ===========================',
+  '  FRAMEWORKS:',
+  '  ↳ Angular',
+  '  ↳ React (this website is built with it!)',
+  ' ',
+  '  OTHER FRONTEND TECH:',
+  '  ↳ Angular Material UI components',
+  '  ↳ HTML',
+  '  ↳ SCSS',
+  ' '
+]
+
+

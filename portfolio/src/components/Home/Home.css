@@ -24,6 +24,8 @@
   position: absolute;
   bottom: 100%;
   animation: scanline 10s linear infinite;
+  white-space: 'pre-wrap';
+  overflow-wrap: 'break-word'
 }
 
 @keyframes scanline {
@@ -40,6 +42,8 @@
 
 .TerminalText {
   text-shadow: 0 0 5px #c8c8c8;
+  white-space: 'pre-wrap';
+  overflow-wrap: 'break-word'
 }
 
 .Cursor {
